@@ -5,31 +5,23 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { version } from '../../package.json'
 import { Pressable } from 'react-native'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../config/firebase'
 
 
 var { width, height } = Dimensions.get('window')
 
-const AdminLoginScreen = ({ navigation }) => {
+const SignUpAdminScreen = ({ navigation }) => {
     // Admin User Password
     const Admin = "Manoj"
     const Password = "Manoj@123"
 
     const [hidePassword, setHidePassword] = useState(true)
-    const [adminEmail, setadminEmail] = useState("")
+    const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
+    const [adminName, setAdminName] = useState("")
+    const [adminEmail, setAdminEmail] = useState("")
     const [adminPassword, setAdminPassword] = useState("")
-
-    const handleSubmit = async () => {
-        if (adminEmail && adminPassword) {
-            try {
-                await signInWithEmailAndPassword(auth, adminEmail, adminPassword)
-            } catch (error) {
-                console.log("Error while Login: ", error)
-            }
-        }
-    }
-
+    const [adminConfirmPassword, setAdminConfirmPassword] = useState("")
 
     const appVersion = () => {
         ToastAndroid.showWithGravity(
@@ -39,12 +31,19 @@ const AdminLoginScreen = ({ navigation }) => {
         );
     };
 
-    const checkUserPassword = () => {
-        if ((adminEmail == Admin) && (adminPassword == Password)) {
-            navigation.pop()
-            navigation.navigate('AdminDashboard')
-            setadminEmail("")
-            setAdminPassword("")
+    const checkInputs = async () => {
+        if (adminName) {
+            if (adminEmail) {
+                if (adminPassword) {
+                    if (adminPassword == adminConfirmPassword) {
+                        try {
+                            await createUserWithEmailAndPassword(auth, adminName, adminEmail, adminPassword)
+                        } catch (error) {
+                            console.log("Error: ", error)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -60,7 +59,7 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
 
-                    <Text style={styles.headerText}>Admin Login</Text>
+                    <Text style={styles.headerText}>Admin Sign Up</Text>
 
                     <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                         <Icon name="information-circle" size={35} color="white" />
@@ -75,15 +74,20 @@ const AdminLoginScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.card}>
-                <Text style={styles.cardTitle}>Login</Text>
 
                 <View style={styles.input}>
                     <View>
-
-                        <Text style={styles.inputTitle}>Username</Text>
+                        <Text style={styles.inputTitle}>Name</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
-                            <TextInput style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='User' value={adminEmail} onChangeText={value => setadminEmail(value)} />
+                            <TextInput style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Name' value={adminName} onChangeText={value => setAdminName(value)} />
+                        </View>
+                    </View>
+                    <View>
+                        <Text style={styles.inputTitle}>Email</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name='mail' padding={8} size={20} color={theme.blackText} />
+                            <TextInput style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Email' value={adminEmail} onChangeText={value => setAdminEmail(value)} />
                         </View>
                     </View>
                     <View>
@@ -91,7 +95,17 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Text style={styles.inputTitle}>Password</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='lock-closed' padding={8} size={20} color={theme.blackText} />
-                            <TextInput style={{ width: width * 0.62, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Password' secureTextEntry={hidePassword} value={adminPassword} onChangeText={value => setAdminPassword(value)} />
+                            <TextInput
+                                style={{
+                                    width: width * 0.62,
+                                    color: theme.blackText
+                                }}
+                                placeholderTextColor={"#808080"}
+                                placeholder='Password'
+                                secureTextEntry={hidePassword}
+                                value={adminPassword}
+                                onChangeText={value => setAdminPassword(value)} />
+
                             <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
                                 {
                                     hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.blackText} />
@@ -99,18 +113,40 @@ const AdminLoginScreen = ({ navigation }) => {
                                         <Icon name='eye-outline' padding={8} size={20} color={theme.blackText} />}
                             </TouchableOpacity>
                         </View>
-                        <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
-                            <Text style={{ color: theme.themeColor, textAlign: 'right', marginTop: 6, fontWeight: '600' }}>Forgot Password?</Text>
-                        </Pressable>
                     </View>
-                    <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit}>
-                        <Text style={styles.loginBtnText}>Login</Text>
+                    <View>
+
+                        <Text style={styles.inputTitle}>Confirm Password</Text>
+                        <View style={styles.inputContainer}>
+                            <Icon name='lock-closed' padding={8} size={20} color={theme.blackText} />
+
+                            <TextInput
+                                style={{
+                                    width: width * 0.62,
+                                    color: theme.blackText
+                                }}
+                                placeholderTextColor={"#808080"}
+                                placeholder='Confirm Password'
+                                secureTextEntry={hideConfirmPassword}
+                                value={adminConfirmPassword}
+                                onChangeText={value => setAdminConfirmPassword(value)} />
+
+                            <TouchableOpacity onPress={() => setHideConfirmPassword(!hideConfirmPassword)}>
+                                {
+                                    hideConfirmPassword ? <Icon name='eye' padding={8} size={20} color={theme.blackText} />
+                                        :
+                                        <Icon name='eye-outline' padding={8} size={20} color={theme.blackText} />}
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <TouchableOpacity style={styles.loginBtn} onPress={() => checkInputs()}>
+                        <Text style={styles.loginBtnText}>Sign Up</Text>
                     </TouchableOpacity>
 
                     <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 4 }}>
-                        <Text style={{ color: theme.blackText, fontSize: 16 }}>Don't Have Account? </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('AdminSignUp')}>
-                            <Text style={{ color: theme.themeColor, fontWeight: 'bold', fontSize: 18 }}> Sign Up.</Text>
+                        <Text style={{ color: theme.blackText, fontSize: 16 }}>Already Have Account? </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Admin')}>
+                            <Text style={{ color: theme.themeColor, fontWeight: 'bold', fontSize: 18 }}> Login.</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -120,7 +156,7 @@ const AdminLoginScreen = ({ navigation }) => {
     )
 }
 
-export default AdminLoginScreen
+export default SignUpAdminScreen
 
 const styles = StyleSheet.create({
     container: {
