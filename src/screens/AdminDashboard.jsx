@@ -1,21 +1,32 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { theme } from '../theme'
 import { signOut } from 'firebase/auth'
 import { auth } from '../config/firebase'
 
 const AdminDashboard = ({ navigation }) => {
 
+    const [logoutBtnDisabled, setLogoutBtnDisabled] = useState(false)
+
     const handleLogout = async () => {
+        setLogoutBtnDisabled(true)
         await signOut(auth)
-        navigation.pop()
-        navigation.navigate('Home')
+        navigation.navigate('Admin')
+        setLogoutBtnDisabled(false)
     }
     return (
         <View style={{ backgroundColor: theme.background, flex: 1 }}>
             <Text>Admin Dashboard</Text>
-            <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
-                <Text style={styles.loginBtnText}>Logout</Text>
+            <TouchableOpacity style={{
+                backgroundColor: logoutBtnDisabled ? '#858585' : theme.themeColor,
+                width: 150,
+                paddingHorizontal: 22,
+                paddingVertical: 12,
+                alignSelf: 'center',
+                elevation: 3,
+                borderRadius: 10
+            }} onPress={handleLogout} disabled={logoutBtnDisabled}>
+                <Text style={styles.logoutBtnText}>Logout</Text>
             </TouchableOpacity>
         </View>
     )
@@ -24,7 +35,7 @@ const AdminDashboard = ({ navigation }) => {
 export default AdminDashboard
 
 const styles = StyleSheet.create({
-    loginBtn: {
+    logoutBtn: {
         backgroundColor: theme.themeColor,
         width: 150,
         paddingHorizontal: 22,
@@ -34,7 +45,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
 
     },
-    loginBtnText: {
+    logoutBtnText: {
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',

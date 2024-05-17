@@ -39,7 +39,7 @@ const App = () => {
           <Stack.Screen name='AdminSignUp' options={{ headerShown: false }} component={SignUpAdminScreen} />
           <Stack.Screen name='Staff' options={{ headerShown: false }} component={StaffLogin} />
           <Stack.Screen name='ForgotPassword' options={{ headerShown: false }} component={ForgotPasswrodScreen} />
-          <Stack.Screen name='AdminDashboard' options={{ headerShown: false }} component={AdminDashboard} />
+          {/* <Stack.Screen name='AdminDashboard' options={{ headerShown: false }} component={AdminDashboard} /> */}
           <Stack.Screen name='StaffDashboard' options={{ headerShown: false }} component={StaffDashboard} />
         </Stack.Navigator>
       </NavigationContainer>

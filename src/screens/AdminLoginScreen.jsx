@@ -20,14 +20,23 @@ const AdminLoginScreen = ({ navigation }) => {
     const [adminEmail, setadminEmail] = useState("")
     const [adminPassword, setAdminPassword] = useState("")
 
+    const [disableLoginBtn, setDisableLoginBtn] = useState(false)
+
     const handleSubmit = async () => {
+        setDisableLoginBtn(true)
         if (adminEmail && adminPassword) {
             try {
                 await signInWithEmailAndPassword(auth, adminEmail, adminPassword)
+                setDisableLoginBtn(true)
             } catch (error) {
                 console.log("Error while Login: ", error)
+                setDisableLoginBtn(false)
             }
+        } else {
+            console.log('please enter fields')
+            setDisableLoginBtn(false)
         }
+        setDisableLoginBtn(false)
     }
 
 
@@ -80,10 +89,10 @@ const AdminLoginScreen = ({ navigation }) => {
                 <View style={styles.input}>
                     <View>
 
-                        <Text style={styles.inputTitle}>Username</Text>
+                        <Text style={styles.inputTitle}>Email</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
-                            <TextInput style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='User' value={adminEmail} onChangeText={value => setadminEmail(value)} />
+                            <TextInput keyboardType='email-address' style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Email' value={adminEmail} onChangeText={value => setadminEmail(value)} />
                         </View>
                     </View>
                     <View>
@@ -103,13 +112,21 @@ const AdminLoginScreen = ({ navigation }) => {
                             <Text style={{ color: theme.themeColor, textAlign: 'right', marginTop: 6, fontWeight: '600' }}>Forgot Password?</Text>
                         </Pressable>
                     </View>
-                    <TouchableOpacity style={styles.loginBtn} onPress={handleSubmit}>
+                    <TouchableOpacity style={{
+                        backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor,
+                        width: 150,
+                        paddingHorizontal: 22,
+                        paddingVertical: 12,
+                        alignSelf: 'center',
+                        elevation: 3,
+                        borderRadius: 10
+                    }} onPress={handleSubmit} disabled={disableLoginBtn}>
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
 
                     <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 4 }}>
                         <Text style={{ color: theme.blackText, fontSize: 16 }}>Don't Have Account? </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('AdminSignUp')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('AdminSignUp')} >
                             <Text style={{ color: theme.themeColor, fontWeight: 'bold', fontSize: 18 }}> Sign Up.</Text>
                         </TouchableOpacity>
                     </View>
@@ -196,13 +213,7 @@ const styles = StyleSheet.create({
         borderColor: '#5e5e5e'
     },
     loginBtn: {
-        backgroundColor: theme.themeColor,
-        width: 150,
-        paddingHorizontal: 22,
-        paddingVertical: 12,
-        alignSelf: 'center',
-        elevation: 3,
-        borderRadius: 10
+
 
     },
     loginBtnText: {
