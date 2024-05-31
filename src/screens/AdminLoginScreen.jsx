@@ -80,7 +80,11 @@ const AdminLoginScreen = ({ navigation }) => {
 
             <View style={styles.loginImage}>
                 <Image source={require('../assets/login.png')}
-                    style={{ height: 165, width: 165, justifyContent: 'center' }} />
+                    style={{
+                        height: 165,
+                        width: 165,
+                        justifyContent: 'center'
+                    }} />
             </View>
 
             <View style={styles.card}>
@@ -124,8 +128,18 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
 
-                    <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 4 }}>
-                        <Text style={{ color: theme.blackText, fontSize: 16 }}>Don't Have Account? </Text>
+                    <View style={{
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 4
+                    }}>
+                        <Text style={{
+                            color: theme.blackText,
+                            fontSize: 16
+                        }}>
+                            Don't Have Account?
+                        </Text>
                         <TouchableOpacity onPress={() => navigation.navigate('AdminSignUp')} >
                             <Text style={{ color: theme.themeColor, fontWeight: 'bold', fontSize: 18 }}> Sign Up.</Text>
                         </TouchableOpacity>
