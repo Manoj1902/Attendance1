@@ -11,6 +11,7 @@ import StaffDashboard from './screens/StaffDashboard';
 import SignUpAdminScreen from './screens/SignUpAdminScreen';
 import useAuth from './hooks/useAuth';
 import InsertEmployeeScreen from './screens/InsertEmployeeScreen';
+import FetchAllEmployeeScreen from './screens/FetchAllEmployeeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ const App = () => {
           {/* <Stack.Screen name='ForgotPassword' options={{ headerShown: false }} component={ForgotPasswrodScreen} /> */}
           <Stack.Screen name='AdminDashboard' options={{ headerShown: false }} component={AdminDashboard} />
           <Stack.Screen name='InsertEmployee' options={{ headerShown: false }} component={InsertEmployeeScreen} />
+          <Stack.Screen name='ShowAllEmployee' options={{ headerShown: false }} component={FetchAllEmployeeScreen} />
           {/* <Stack.Screen name='StaffDashboard' options={{ headerShown: false }} component={StaffDashboard} /> */}
         </Stack.Navigator>
       </NavigationContainer>

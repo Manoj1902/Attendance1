@@ -179,5 +179,6 @@ const styles = StyleSheet.create({
     insertBtnText: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: theme.text,
     },
 })
