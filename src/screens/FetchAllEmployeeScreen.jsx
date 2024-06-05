@@ -1,4 +1,4 @@
-import { Alert, Button, FlatList, StyleSheet, Text, View } from 'react-native'
+import { Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { theme } from '../theme';
@@ -6,6 +6,12 @@ import { theme } from '../theme';
 const FetchAllEmployeeScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [currentItem, setCurrentItem] = useState(null);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
 
     useEffect(() => {
         fetchData();
@@ -26,7 +32,7 @@ const FetchAllEmployeeScreen = () => {
     const deleteItem = async (id) => {
         try {
             const response = await axios.post('http://192.168.137.1/api/delete.php', {
-                id: id
+                Id: id
             });
             Alert.alert('Success', response.data.Message);
             fetchData(); // Refresh the list after deletion
@@ -36,6 +42,34 @@ const FetchAllEmployeeScreen = () => {
         }
     };
 
+
+    const editItem = (item) => {
+        setCurrentItem(item);
+        setName(item.Name);
+        setEmail(item.Email);
+        setPassword(item.Password);
+        setModalVisible(true);
+    };
+
+
+    const updateItem = async () => {
+        try {
+            const response = await axios.post('http://192.168.137.1/api/update.php', {
+                Id: currentItem.Id,
+                Name: name,
+                Email: email,
+                Password: password
+            });
+            Alert.alert('Success', response.data.Message);
+            setModalVisible(false);
+            fetchData(); // Refresh the list after update
+        } catch (error) {
+            console.error('Error updating item:', error);
+            Alert.alert('Error', 'Error updating item. Please try again.');
+        }
+    };
+
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <View style={{ flexDirection: 'row', gap: 15 }}>
@@ -43,9 +77,11 @@ const FetchAllEmployeeScreen = () => {
                 <View>
                     <Text style={styles.name}>{item.Name}</Text>
                     <Text style={styles.email}>{item.Email}</Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Button title="Edit" onPress={() => editItem(item)} />
                     <Button title="Delete" onPress={() => deleteItem(item.Id)} />
                 </View>
-
             </View>
         </View>
     );
@@ -61,6 +97,40 @@ const FetchAllEmployeeScreen = () => {
                     renderItem={renderItem}
                 />
             )}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.modalView}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Name"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={true}
+                    />
+                    <View style={styles.buttonContainer}>
+                        <Button title="Update" onPress={updateItem} />
+                        <Button title="Cancel" onPress={() => setModalVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -77,6 +147,9 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     name: {
         fontSize: 18,
@@ -86,8 +159,34 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#555',
     },
+    buttonContainer: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: '#0e0e0e',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        padding: 10,
+        width: '100%',
+    },
     button: {
         marginLeft: 10,
-        width: 80
     },
 })
