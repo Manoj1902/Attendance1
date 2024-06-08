@@ -1,16 +1,38 @@
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { theme } from '../theme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { version } from '../../package.json'
 import { Pressable } from 'react-native'
+import axios from 'axios'
 
 
 var { width, height } = Dimensions.get('window')
 
 const AdminLoginScreen = ({ navigation }) => {
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true)
+
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('http://192.168.137.1/api/login.php', {
+                Email: email,
+                Password: password
+            });
+            if (response.data.Status) {
+                Alert.alert('Success', response.data.Message);
+                navigation.navigate('StaffDashboard'); // Replace 'Home' with the name of your home screen
+            } else {
+                Alert.alert('Error', response.data.Message);
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            Alert.alert('Error', 'Error logging in. Please try again.');
+        }
+    };
 
     const appVersion = () => {
         ToastAndroid.showWithGravity(
@@ -55,7 +77,13 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Text style={styles.inputTitle}>Username</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
-                            <TextInput style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='User' />
+                            <TextInput
+                                style={{ width: width, color: theme.blackText }}
+                                placeholderTextColor={"#808080"} placeholder="Email"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                            />
                         </View>
                     </View>
                     <View>
@@ -63,7 +91,13 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Text style={styles.inputTitle}>Password</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='lock-closed' padding={8} size={20} color={theme.blackText} />
-                            <TextInput style={{ width: width * 0.62, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Password' secureTextEntry={hidePassword} />
+                            <TextInput
+                                style={{ width: width * 0.62, color: theme.blackText }}
+                                placeholderTextColor={"#808080"} placeholder='Password'
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={hidePassword}
+                            />
                             <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
                                 {
                                     hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.blackText} />
@@ -72,10 +106,18 @@ const AdminLoginScreen = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
                         <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
-                            <Text style={{ color: theme.themeColor, textAlign: 'right', marginTop: 6, fontWeight: '600' }}>Forgot Password?</Text>
+                            <Text
+                                style={{
+                                    color: theme.themeColor,
+                                    textAlign: 'right',
+                                    marginTop: 6,
+                                    fontWeight: '600'
+                                }}>
+                                Forgot Password?
+                            </Text>
                         </Pressable>
                     </View>
-                    <TouchableOpacity style={styles.loginBtn}>
+                    <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} >
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
                 </View>
