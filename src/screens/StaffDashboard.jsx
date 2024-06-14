@@ -1,14 +1,18 @@
+import { theme } from '../theme';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, PermissionsAndroid } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
-import { getDistance, getPreciseDistance } from 'geolib';
-import { theme } from '../theme';
+import { PermissionsAndroid } from 'react-native';
 
-const StaffDashboard = () => {
+
+var { width, height } = Dimensions.get('window')
+const HomeScreen = ({ navigation }) => {
     const [imageUri, setImageUri] = useState(null);
     const [location, setLocation] = useState(null);
+    const [date, setDate] = useState('');
+    const [time, setTime] = useState('');
     const [cameraRef, setCameraRef] = useState(null);
 
     useEffect(() => {
@@ -40,11 +44,8 @@ const StaffDashboard = () => {
     const getLocation = () => {
         Geolocation.getCurrentPosition(
             (position) => {
-                // const { latitude, longitude } = position.coords;
-                const latitude = position.coords.latitude.toFixed(3)
-                const longitude = position.coords.longitude.toFixed(3)
-                const location = { latitude, longitude };
-                setLocation(location);
+                const { latitude, longitude } = position.coords;
+                setLocation(`${latitude}, ${longitude}`);
             },
             (error) => {
                 console.error(error);
@@ -59,6 +60,9 @@ const StaffDashboard = () => {
             const options = { quality: 0.5, base64: true };
             const data = await cameraRef.takePictureAsync(options);
             setImageUri(data.uri);
+            const currentDate = new Date();
+            setDate(currentDate.toISOString().split('T')[0]);
+            setTime(currentDate.toLocaleTimeString());
             getLocation();
         }
     };
@@ -75,9 +79,9 @@ const StaffDashboard = () => {
             type: 'image/jpeg',
             name: 'photo.jpg',
         });
-        formData.append('date', new Date().toISOString().split('T')[0]);
-        formData.append('time', new Date().toLocaleTimeString());
-        formData.append('location', `${location.latitude}, ${location.longitude}`);
+        formData.append('date', date);
+        formData.append('time', time);
+        formData.append('location', location);
 
         try {
             const response = await axios.post('http://192.168.137.1/api/upload.php', formData, {
@@ -86,59 +90,94 @@ const StaffDashboard = () => {
                 },
             });
             Alert.alert('Success', response.data.message);
+            openCameraScreen();
+
         } catch (error) {
             console.error('Error uploading image:', error);
             Alert.alert('Error', 'Failed to upload image. Please try again.');
         }
     };
 
+    const openCameraScreen = () => {
+        setImageUri(null)
+        setDate('')
+        setTime('')
+        setLocation(null)
+        setCameraRef(null)
+    }
+
     return (
         <View style={styles.container}>
             {imageUri ? (
-                <View>
-                    <Image source={{ uri: imageUri }} style={styles.preview} />
-                    <Text>Location: {location ? `${location.latitude}, ${location.longitude}` : 'Getting location...'}</Text>
-                    <TouchableOpacity onPress={uploadImage} style={styles.button}>
-                        <Text style={styles.buttonText}>Upload Image</Text>
-                    </TouchableOpacity>
+                <View style={styles.capturedInfo}>
+                    <View>
+                        {/* <Text>Image</Text> */}
+                        <Image
+                            source={{ uri: imageUri }}
+                            style={{
+                                width: 200,
+                                height: 200,
+                                borderRadius: 100,
+                                marginTop: 25,
+                                borderWidth: 4,
+                                borderColor: '#535C68'
+                            }} />
+                    </View>
+
+                    <View style={{ alignItems: 'center' }}>
+                        <Text>Date: {date}</Text>
+                        <Text>Time: {time}</Text>
+                        <Text>Location: {location}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity onPress={uploadImage} style={styles.button}>
+                            <Text style={styles.buttonText}>Upload Image</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={openCameraScreen} style={styles.button}>
+                            <Text style={styles.buttonText}>Re-Take</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             ) : (
-                <RNCamera
-                    ref={(ref) => setCameraRef(ref)}
-                    style={styles.preview}
-                    type={RNCamera.Constants.Type.front}
-                    captureAudio={false}
-                >
+                <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+                    <RNCamera
+                        ref={(ref) => setCameraRef(ref)}
+                        style={styles.preview}
+                        type={RNCamera.Constants.Type.front}
+                        captureAudio={false}
+                    />
                     <View style={styles.captureContainer}>
                         <TouchableOpacity onPress={takePicture} style={styles.button}>
                             <Text style={styles.buttonText}>Capture Image</Text>
                         </TouchableOpacity>
                     </View>
-                </RNCamera>
+                </View>
             )}
         </View>
     );
-}
-
-export default StaffDashboard
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: theme.background
     },
+    capturedInfo: {
+        alignItems: 'center',
+        gap: 10
+    },
     preview: {
-        width: '100%',
-        height: '80%',
-        justifyContent: 'flex-end',
+        width: 350,
+        height: 350,
         alignItems: 'center',
     },
     captureContainer: {
-        flex: 0,
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'center',
+        marginTop: 25,
     },
     button: {
         flex: 0,
@@ -153,4 +192,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#000',
     },
-})
+});
+
+export default HomeScreen;
