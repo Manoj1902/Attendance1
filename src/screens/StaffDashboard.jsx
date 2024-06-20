@@ -146,11 +146,12 @@ const HomeScreen = ({ navigation }) => {
                         style={styles.preview}
                         type={RNCamera.Constants.Type.front}
                         captureAudio={false}
-                    />
-                    <View style={styles.captureContainer}>
+                    >
                         <TouchableOpacity onPress={takePicture} style={styles.button}>
-                            <Text style={styles.buttonText}>Capture Image</Text>
+                            {/* <Text style={styles.buttonText}>Capture Image</Text> */}
                         </TouchableOpacity>
+                    </RNCamera>
+                    <View style={styles.captureContainer}>
                     </View>
                 </View>
             )}
@@ -170,19 +171,21 @@ const styles = StyleSheet.create({
         gap: 10
     },
     preview: {
-        width: 350,
-        height: 350,
+        width: width,
+        height: height,
         alignItems: 'center',
+        justifyContent: 'flex-end',
     },
     captureContainer: {
         flexDirection: 'column',
-        justifyContent: 'center',
         marginTop: 25,
     },
     button: {
+        width: 80,
+        height: 80,
         flex: 0,
         backgroundColor: '#fff',
-        borderRadius: 5,
+        borderRadius: 99999,
         padding: 15,
         paddingHorizontal: 20,
         alignSelf: 'center',

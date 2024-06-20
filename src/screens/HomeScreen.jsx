@@ -1,5 +1,5 @@
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { Dimensions, PermissionsAndroid, SafeAreaView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import React, { useEffect } from 'react'
 import { theme } from '../theme'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { version } from '../../package.json';
@@ -8,6 +8,32 @@ var { width, height } = Dimensions.get('window')
 const HomeScreen = ({ navigation }) => {
     // const version = Device
 
+    useEffect(() => {
+        requestLocationPermission();
+    }, []);
+
+
+    const requestLocationPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    title: 'Location Permission',
+                    message: 'This app needs access to your location.',
+                    buttonNeutral: 'Ask Me Later',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('Location permission granted');
+            } else {
+                console.log('Location permission denied');
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
 
     const appVersion = () => {
         ToastAndroid.showWithGravity(
@@ -16,6 +42,9 @@ const HomeScreen = ({ navigation }) => {
             ToastAndroid.CENTER,
         );
     };
+
+
+
 
     return (
         <SafeAreaView style={styles.container}>
