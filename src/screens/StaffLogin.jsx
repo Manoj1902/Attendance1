@@ -12,14 +12,14 @@ var { width, height } = Dimensions.get('window')
 
 const AdminLoginScreen = ({ navigation }) => {
 
-    const [email, setEmail] = useState('');
+    const [Mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true)
 
     const handleLogin = async () => {
         try {
             const response = await axios.post('http://192.168.137.1/api/login.php', {
-                Email: email,
+                Mobile: Mobile,
                 Password: password
             });
             if (response.data.Status) {
@@ -79,10 +79,10 @@ const AdminLoginScreen = ({ navigation }) => {
                             <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
                             <TextInput
                                 style={{ width: width, color: theme.blackText }}
-                                placeholderTextColor={"#808080"} placeholder="Email"
-                                value={email}
-                                onChangeText={setEmail}
-                                keyboardType="email-address"
+                                placeholderTextColor={"#808080"} placeholder="Mobile"
+                                value={Mobile}
+                                onChangeText={setMobile}
+                                keyboardType="Mobile-address"
                             />
                         </View>
                     </View>

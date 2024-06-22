@@ -12,7 +12,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
     const [hidePassword, setHidePassword] = useState(true)
 
     const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
+    const [Mobile, setMobile] = useState('')
     const [password, setPassword] = useState('')
 
     const appVersion = () => {
@@ -26,10 +26,10 @@ const InsertEmployeeScreen = ({ navigation }) => {
     const handleInsert = () => {
 
         let uName = name
-        let uEmail = email
+        let uMobile = Mobile
         let uPassword = password
 
-        if (uName.length == 0 || uEmail == 0 || uPassword == 0) {
+        if (uName.length == 0 || uMobile == 0 || uPassword == 0) {
             Alert.alert("Required Field is Missing");
         } else {
             var InsertURL = 'http://192.168.137.1/api/insert.php'
@@ -41,7 +41,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
 
             var Data = {
                 Name: uName,
-                Email: uEmail,
+                Mobile: uMobile,
                 Password: uPassword
             }
 
@@ -60,7 +60,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
         }
 
         setName('')
-        setEmail('')
+        setMobile('')
         setPassword('')
 
     }
@@ -92,10 +92,10 @@ const InsertEmployeeScreen = ({ navigation }) => {
                         </View>
                     </View>
                     <View>
-                        <Text style={styles.inputTitle}>Email</Text>
+                        <Text style={styles.inputTitle}>Mobile</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
-                            <TextInput keyboardType='email-address' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Email' value={email} onChangeText={value => setEmail(value)} />
+                            <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Mobile' value={Mobile} onChangeText={value => setMobile(value)} />
                         </View>
                     </View>
                     <View>

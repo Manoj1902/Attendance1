@@ -9,7 +9,7 @@ const FetchAllEmployeeScreen = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [Mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
 
 
@@ -19,7 +19,7 @@ const FetchAllEmployeeScreen = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://192.168.137.1/api/fetch.php'); // replace with your local IP address   
+            const response = await axios.get('http://192.168.137.1/api/fetch.php');
             // console.log(response.data);
             setData(response.data);
             setLoading(false);
@@ -32,7 +32,7 @@ const FetchAllEmployeeScreen = () => {
     const deleteItem = async (id) => {
         try {
             const response = await axios.post('http://192.168.137.1/api/delete.php', {
-                Id: id
+                id: id
             });
             Alert.alert('Success', response.data.Message);
             fetchData(); // Refresh the list after deletion
@@ -46,7 +46,7 @@ const FetchAllEmployeeScreen = () => {
     const editItem = (item) => {
         setCurrentItem(item);
         setName(item.Name);
-        setEmail(item.Email);
+        setMobile(item.Mobile);
         setPassword(item.Password);
         setModalVisible(true);
     };
@@ -57,7 +57,7 @@ const FetchAllEmployeeScreen = () => {
             const response = await axios.post('http://192.168.137.1/api/update.php', {
                 Id: currentItem.Id,
                 Name: name,
-                Email: email,
+                Mobile: Mobile,
                 Password: password
             });
             Alert.alert('Success', response.data.Message);
@@ -76,7 +76,7 @@ const FetchAllEmployeeScreen = () => {
                 <Text style={styles.name}>{item.Id}</Text>
                 <View>
                     <Text style={styles.name}>{item.Name}</Text>
-                    <Text style={styles.email}>{item.Email}</Text>
+                    <Text style={styles.Mobile}>{item.Mobile}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button title="Edit" onPress={() => editItem(item)} />
@@ -114,9 +114,9 @@ const FetchAllEmployeeScreen = () => {
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Email"
-                        value={email}
-                        onChangeText={setEmail}
+                        placeholder="Mobile"
+                        value={Mobile}
+                        onChangeText={setMobile}
                     />
                     <TextInput
                         style={styles.input}
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    email: {
+    Mobile: {
         fontSize: 16,
         color: '#555',
     },
