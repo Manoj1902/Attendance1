@@ -1,6 +1,7 @@
-import { Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 
 const FetchAllEmployeeScreen = () => {
@@ -9,9 +10,9 @@ const FetchAllEmployeeScreen = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const [name, setName] = useState('');
-    const [Mobile, setMobile] = useState('');
+    const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
-
+    const navigation = useNavigation();
 
     useEffect(() => {
         fetchData();
@@ -20,7 +21,6 @@ const FetchAllEmployeeScreen = () => {
     const fetchData = async () => {
         try {
             const response = await axios.get('http://192.168.137.1/api/fetch.php');
-            // console.log(response.data);
             setData(response.data);
             setLoading(false);
         } catch (error) {
@@ -37,11 +37,10 @@ const FetchAllEmployeeScreen = () => {
             Alert.alert('Success', response.data.Message);
             fetchData(); // Refresh the list after deletion
         } catch (error) {
-            // console.error('Error deleting item:', error);
+            console.error('Error deleting item:', error);
             Alert.alert('Error', 'Error deleting item. Please try again.');
         }
     };
-
 
     const editItem = (item) => {
         setCurrentItem(item);
@@ -51,13 +50,12 @@ const FetchAllEmployeeScreen = () => {
         setModalVisible(true);
     };
 
-
     const updateItem = async () => {
         try {
             const response = await axios.post('http://192.168.137.1/api/update.php', {
                 Id: currentItem.Id,
                 Name: name,
-                Mobile: Mobile,
+                Mobile: mobile,
                 Password: password
             });
             Alert.alert('Success', response.data.Message);
@@ -69,21 +67,20 @@ const FetchAllEmployeeScreen = () => {
         }
     };
 
-
     const renderItem = ({ item }) => (
-        <View style={styles.item}>
+        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('EmployeeDetailScreen', { employee: item })}>
             <View style={{ flexDirection: 'row', gap: 15 }}>
                 <Text style={styles.name}>{item.Id}</Text>
                 <View>
                     <Text style={styles.name}>{item.Name}</Text>
-                    <Text style={styles.Mobile}>{item.Mobile}</Text>
+                    <Text style={styles.mobile}>{item.Mobile}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button title="Edit" onPress={() => editItem(item)} />
                     <Button title="Delete" onPress={() => deleteItem(item.Id)} />
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     return (
@@ -115,7 +112,7 @@ const FetchAllEmployeeScreen = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="Mobile"
-                        value={Mobile}
+                        value={mobile}
                         onChangeText={setMobile}
                     />
                     <TextInput
@@ -133,9 +130,9 @@ const FetchAllEmployeeScreen = () => {
             </Modal>
         </View>
     );
-}
+};
 
-export default FetchAllEmployeeScreen
+export default FetchAllEmployeeScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -155,7 +152,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    Mobile: {
+    mobile: {
         fontSize: 16,
         color: '#555',
     },
@@ -189,4 +186,4 @@ const styles = StyleSheet.create({
     button: {
         marginLeft: 10,
     },
-})
+});

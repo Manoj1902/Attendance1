@@ -1,18 +1,18 @@
-import { Alert, Dimensions, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View, Image, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { theme } from '../theme'
 import { version } from '../../package.json'
-
-
 
 var { width, height } = Dimensions.get('window')
 const InsertEmployeeScreen = ({ navigation }) => {
 
     const [hidePassword, setHidePassword] = useState(true)
-
     const [name, setName] = useState('')
     const [Mobile, setMobile] = useState('')
+    const [Salary, setSalary] = useState('')
+    const [ImageURI, setImageURI] = useState(null)
     const [password, setPassword] = useState('')
 
     const appVersion = () => {
@@ -23,13 +23,39 @@ const InsertEmployeeScreen = ({ navigation }) => {
         );
     };
 
-    const handleInsert = () => {
+    const selectImage = () => {
+        launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else {
+                const source = response.assets[0].base64;
+                setImageURI(`data:image/jpeg;base64,${source}`);
+            }
+        });
+    }
 
+    const takePhoto = () => {
+        launchCamera({ mediaType: 'photo', includeBase64: true }, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled camera');
+            } else if (response.error) {
+                console.log('Camera Error: ', response.error);
+            } else {
+                const source = response.assets[0].base64;
+                setImageURI(`data:image/jpeg;base64,${source}`);
+            }
+        });
+    }
+
+    const handleInsert = () => {
         let uName = name
         let uMobile = Mobile
+        let uSalary = Salary
         let uPassword = password
 
-        if (uName.length == 0 || uMobile == 0 || uPassword == 0) {
+        if (uName.length == 0 || uMobile == 0 || uSalary == 0 || uPassword == 0 || ImageURI == null) {
             Alert.alert("Required Field is Missing");
         } else {
             var InsertURL = 'http://192.168.137.1/api/insert.php'
@@ -42,7 +68,9 @@ const InsertEmployeeScreen = ({ navigation }) => {
             var Data = {
                 Name: uName,
                 Mobile: uMobile,
-                Password: uPassword
+                Salary: uSalary,
+                Password: uPassword,
+                Image: ImageURI
             }
 
             fetch(InsertURL, {
@@ -50,9 +78,15 @@ const InsertEmployeeScreen = ({ navigation }) => {
                 headers: headers,
                 body: JSON.stringify(Data)
             })
-                .then((response) => response.json())
-                .then((response) => {
-                    Alert.alert(response[0].Message)
+                .then((response) => response.text())  // Change to .text() to see the full response
+                .then((responseText) => {
+                    console.log(responseText);  // Log the raw response
+                    try {
+                        const responseJson = JSON.parse(responseText);  // Parse the JSON if possible
+                        Alert.alert(responseJson[0].Message);
+                    } catch (e) {
+                        Alert.alert('Error parsing response: ' + e.message);
+                    }
                 })
                 .catch((error) => {
                     Alert.alert('Error: ' + error)
@@ -61,8 +95,9 @@ const InsertEmployeeScreen = ({ navigation }) => {
 
         setName('')
         setMobile('')
+        setSalary('')
         setPassword('')
-
+        setImageURI(null)
     }
 
     return (
@@ -81,43 +116,93 @@ const InsertEmployeeScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
+            <ScrollView>
 
-            <View>
-                <View style={styles.input}>
-                    <View>
-                        <Text style={styles.inputTitle}>Name</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='person-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
-                            <TextInput style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Name' value={name} onChangeText={value => setName(value)} />
+                <View>
+                    <View style={styles.input}>
+                        <View>
+                            <Text style={styles.inputTitle}>Name</Text>
+                            <View style={styles.inputContainer}>
+                                <Icon name='person-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <TextInput style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Name' value={name} onChangeText={value => setName(value)} />
+                            </View>
                         </View>
-                    </View>
-                    <View>
-                        <Text style={styles.inputTitle}>Mobile</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
-                            <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Mobile' value={Mobile} onChangeText={value => setMobile(value)} />
+                        <View>
+                            <Text style={styles.inputTitle}>Mobile</Text>
+                            <View style={styles.inputContainer}>
+                                <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Mobile' value={Mobile} onChangeText={value => setMobile(value)} />
+                            </View>
                         </View>
-                    </View>
-                    <View>
-                        <Text style={styles.inputTitle}>Password</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='lock-closed' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
-                            <TextInput style={{ width: width * 0.75, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Password' secureTextEntry={hidePassword} value={password} onChangeText={value => setPassword(value)} />
-                            <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-                                {
-                                    hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.text} />
-                                        :
-                                        <Icon name='eye-outline' padding={8} size={20} color={theme.text} />}
-                            </TouchableOpacity>
+                        <View>
+
+                            <Text style={styles.inputTitle}>Salary</Text>
+                            <View style={styles.inputContainer}>
+                                <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Salary' value={Salary} onChangeText={value => setSalary(value)} />
+                            </View>
                         </View>
+                        <View>
+                            <Text style={styles.inputTitle}>Password</Text>
+                            <View style={styles.inputContainer}>
+                                <Icon name='lock-closed' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <TextInput style={{ width: width * 0.75, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Password' secureTextEntry={hidePassword} value={password} onChangeText={value => setPassword(value)} />
+                                <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+                                    {
+                                        hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.text} />
+                                            :
+                                            <Icon name='eye-outline' padding={8} size={20} color={theme.text} />}
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={styles.inputTitle}>Upload Image</Text>
+                            <View style={{ flexDirection: "row", justifyContent: 'center', alignItems: 'center', gap: 40 }}>
+                                <TouchableOpacity
+                                    onPress={selectImage}
+                                    style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderWidth: 1,
+                                        paddingHorizontal: 30,
+                                        paddingVertical: 8,
+                                        borderRadius: 10,
+                                        borderWidth: 1.5,
+                                        borderColor: '#5e5e5e',
+                                    }}>
+                                    <Icon name='images' size={30} color={theme.text} />
+                                    <Text>{ImageURI ? 'Image Selected' : 'Select Image'}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={takePhoto}
+                                    style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderWidth: 1,
+                                        paddingHorizontal: 30,
+                                        paddingVertical: 8,
+                                        borderRadius: 10,
+                                        borderWidth: 1.5,
+                                        borderColor: '#5e5e5e',
+                                    }}>
+
+                                    <Icon name='camera' size={30} color={theme.text} />
+                                    <Text>{ImageURI ? 'Image Clicked' : 'Take Photo'}</Text>
+                                </TouchableOpacity>
+                            </View>
+                            {ImageURI && (
+                                <Image source={{ uri: ImageURI }} style={{ width: 100, height: 100, marginTop: 10, }} />
+                            )}
+                        </View>
+                        <TouchableOpacity style={styles.insertBtn} onPress={handleInsert}>
+                            <Text style={styles.insertBtnText}>
+                                Insert
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.insertBtn} onPress={handleInsert}>
-                        <Text style={styles.insertBtnText}>
-                            Insert
-                        </Text>
-                    </TouchableOpacity>
                 </View>
-            </View>
+            </ScrollView>
+
         </View>
     )
 }
@@ -148,7 +233,6 @@ const styles = StyleSheet.create({
         color: theme.text
     },
     input: {
-        // backgroundColor: 'red',
         marginTop: 28,
         padding: 8,
         gap: 30
@@ -162,7 +246,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        // backgroundColor: 'blue',
         borderRadius: 10,
         borderWidth: 1.5,
         borderColor: '#5e5e5e'
