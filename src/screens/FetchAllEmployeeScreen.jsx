@@ -1,4 +1,4 @@
-import { Alert, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -60,7 +60,7 @@ const FetchAllEmployeeScreen = () => {
             });
             Alert.alert('Success', response.data.Message);
             setModalVisible(false);
-            fetchData(); // Refresh the list after update
+            fetchData(); // Refresh the list after update. 
         } catch (error) {
             console.error('Error updating item:', error);
             Alert.alert('Error', 'Error updating item. Please try again.');
@@ -68,8 +68,10 @@ const FetchAllEmployeeScreen = () => {
     };
 
     const renderItem = ({ item }) => (
+
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('EmployeeDetailScreen', { employee: item })}>
             <View style={{ flexDirection: 'row', gap: 15 }}>
+                <Image source={{ uri: item.Image }} style={{ width: 100, height: 100 }} />
                 <Text style={styles.name}>{item.Id}</Text>
                 <View>
                     <Text style={styles.name}>{item.Name}</Text>
@@ -90,7 +92,7 @@ const FetchAllEmployeeScreen = () => {
             ) : (
                 <FlatList
                     data={data}
-                    keyExtractor={(item) => item.Id.toString()}
+                    keyExtractor={(item) => item.Id?.toString()}
                     renderItem={renderItem}
                 />
             )}

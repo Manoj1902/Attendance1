@@ -5,14 +5,18 @@ import { theme } from '../theme';
 const EmployeeDetailScreen = ({ route }) => {
     const { employee } = route.params;
 
+    console.log('Employee Image URL:', employee.Image); // Log the image URL for debugging.  
+
     return (
         <View style={styles.container}>
-            {employee.Image && (
+            {employee.Image ? (
                 <Image source={{ uri: employee.Image }} style={styles.image} />
+            ) : (
+                <Text>No Image Available</Text>
             )}
             <Text style={styles.label}>Name: {employee.Name}</Text>
             <Text style={styles.label}>Mobile: {employee.Mobile}</Text>
-            <Text style={styles.label}>Email: {employee.Email}</Text>
+            <Text style={styles.label}>Password: {employee.Password}</Text>
             {/* Add more employee details as needed */}
         </View>
     );
