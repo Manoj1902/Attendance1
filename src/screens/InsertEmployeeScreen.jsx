@@ -1,19 +1,20 @@
-import { Alert, Dimensions, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View, Image, ScrollView } from 'react-native'
-import React, { useState } from 'react'
-import Icon from 'react-native-vector-icons/Ionicons'
+import { Alert, Dimensions, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View, Image, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
-import { theme } from '../theme'
-import { version } from '../../package.json'
+import { theme } from '../theme';
+import { version } from '../../package.json';
 
-var { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
+
 const InsertEmployeeScreen = ({ navigation }) => {
-
-    const [hidePassword, setHidePassword] = useState(true)
-    const [name, setName] = useState('')
-    const [Mobile, setMobile] = useState('')
-    const [Salary, setSalary] = useState('')
-    const [ImageURI, setImageURI] = useState(null)
-    const [password, setPassword] = useState('')
+    const [hidePassword, setHidePassword] = useState(true);
+    const [name, setName] = useState('');
+    const [department, setDepartment] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [salary, setSalary] = useState('');
+    const [imageURI, setImageURI] = useState(null);
+    const [password, setPassword] = useState('');
 
     const appVersion = () => {
         ToastAndroid.showWithGravity(
@@ -34,7 +35,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
                 setImageURI(`data:image/jpeg;base64,${source}`);
             }
         });
-    }
+    };
 
     const takePhoto = () => {
         launchCamera({ mediaType: 'photo', includeBase64: true }, (response) => {
@@ -47,31 +48,31 @@ const InsertEmployeeScreen = ({ navigation }) => {
                 setImageURI(`data:image/jpeg;base64,${source}`);
             }
         });
-    }
+    };
 
     const handleInsert = () => {
-        let uName = name
-        let uMobile = Mobile
-        let uSalary = Salary
-        let uPassword = password
+        let uName = name + " (" + department + ")";
+        let uMobile = mobile;
+        let uSalary = salary;
+        let uPassword = password;
 
-        if (uName.length == 0 || uMobile == 0 || uSalary == 0 || uPassword == 0 || ImageURI == null) {
+        if (uName.length == 0 || uMobile.length == 0 || uSalary.length == 0 || uPassword.length == 0 || imageURI == null) {
             Alert.alert("Required Field is Missing");
         } else {
-            var InsertURL = 'http://192.168.137.1/api/insert.php'
+            var InsertURL = 'http://192.168.137.1/api/insert.php';
 
             var headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            }
+            };
 
             var Data = {
                 Name: uName,
                 Mobile: uMobile,
                 Salary: uSalary,
                 Password: uPassword,
-                Image: ImageURI
-            }
+                Image: imageURI
+            };
 
             fetch(InsertURL, {
                 method: 'POST',
@@ -89,20 +90,20 @@ const InsertEmployeeScreen = ({ navigation }) => {
                     }
                 })
                 .catch((error) => {
-                    Alert.alert('Error: ' + error)
-                })
-        }
+                    Alert.alert('Error: ' + error);
+                });
 
-        setName('')
-        setMobile('')
-        setSalary('')
-        setPassword('')
-        setImageURI(null)
-    }
+            setName('');
+            setMobile('');
+            setSalary('');
+            setPassword('');
+            setImageURI(null);
+        }
+    };
 
     return (
         <View style={styles.container}>
-            <SafeAreaView >
+            <SafeAreaView>
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
@@ -117,7 +118,6 @@ const InsertEmployeeScreen = ({ navigation }) => {
                 </View>
             </SafeAreaView>
             <ScrollView>
-
                 <View>
                     <View style={styles.input}>
                         <View>
@@ -128,18 +128,24 @@ const InsertEmployeeScreen = ({ navigation }) => {
                             </View>
                         </View>
                         <View>
-                            <Text style={styles.inputTitle}>Mobile</Text>
+                            <Text style={styles.inputTitle}>Department</Text>
                             <View style={styles.inputContainer}>
-                                <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
-                                <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Mobile' value={Mobile} onChangeText={value => setMobile(value)} />
+                                <Icon name='person-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <TextInput style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Department' value={department} onChangeText={value => setDepartment(value)} />
                             </View>
                         </View>
                         <View>
-
+                            <Text style={styles.inputTitle}>Mobile</Text>
+                            <View style={styles.inputContainer}>
+                                <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Mobile' value={mobile} onChangeText={value => setMobile(value)} />
+                            </View>
+                        </View>
+                        <View>
                             <Text style={styles.inputTitle}>Salary</Text>
                             <View style={styles.inputContainer}>
                                 <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
-                                <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Salary' value={Salary} onChangeText={value => setSalary(value)} />
+                                <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Salary' value={salary} onChangeText={value => setSalary(value)} />
                             </View>
                         </View>
                         <View>
@@ -148,10 +154,9 @@ const InsertEmployeeScreen = ({ navigation }) => {
                                 <Icon name='lock-closed' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
                                 <TextInput style={{ width: width * 0.75, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Password' secureTextEntry={hidePassword} value={password} onChangeText={value => setPassword(value)} />
                                 <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-                                    {
-                                        hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.text} />
-                                            :
-                                            <Icon name='eye-outline' padding={8} size={20} color={theme.text} />}
+                                    {hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.text} />
+                                        :
+                                        <Icon name='eye-outline' padding={8} size={20} color={theme.text} />}
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -171,7 +176,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
                                         borderColor: '#5e5e5e',
                                     }}>
                                     <Icon name='images' size={30} color={theme.text} />
-                                    <Text>{ImageURI ? 'Image Selected' : 'Select Image'}</Text>
+                                    <Text>{imageURI ? 'Image Selected' : 'Select Image'}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={takePhoto}
@@ -185,13 +190,12 @@ const InsertEmployeeScreen = ({ navigation }) => {
                                         borderWidth: 1.5,
                                         borderColor: '#5e5e5e',
                                     }}>
-
                                     <Icon name='camera' size={30} color={theme.text} />
-                                    <Text>{ImageURI ? 'Image Clicked' : 'Take Photo'}</Text>
+                                    <Text>{imageURI ? 'Image Clicked' : 'Take Photo'}</Text>
                                 </TouchableOpacity>
                             </View>
-                            {ImageURI && (
-                                <Image source={{ uri: ImageURI }} style={{ width: 100, height: 100, marginTop: 10, }} />
+                            {imageURI && (
+                                <Image source={{ uri: imageURI }} style={{ width: 100, height: 100, marginTop: 10 }} />
                             )}
                         </View>
                         <TouchableOpacity style={styles.insertBtn} onPress={handleInsert}>
@@ -202,12 +206,11 @@ const InsertEmployeeScreen = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
-
         </View>
-    )
-}
+    );
+};
 
-export default InsertEmployeeScreen
+export default InsertEmployeeScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -235,7 +238,7 @@ const styles = StyleSheet.create({
     input: {
         marginTop: 28,
         padding: 8,
-        gap: 30
+        gap: 30,
     },
     inputTitle: {
         paddingHorizontal: 8,
@@ -248,7 +251,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         borderRadius: 10,
         borderWidth: 1.5,
-        borderColor: '#5e5e5e'
+        borderColor: '#5e5e5e',
     },
     insertBtn: {
         padding: 10,
@@ -262,6 +265,6 @@ const styles = StyleSheet.create({
     insertBtnText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.text,
-    },
-})
+        color: theme.text
+    }
+});

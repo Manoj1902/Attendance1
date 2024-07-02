@@ -1,9 +1,10 @@
-import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, Dimensions, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 
+var { width, height } = Dimensions.get('window')
 const FetchAllEmployeeScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,6 +13,7 @@ const FetchAllEmployeeScreen = () => {
     const [name, setName] = useState('');
     const [mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -30,16 +32,29 @@ const FetchAllEmployeeScreen = () => {
     };
 
     const deleteItem = async (id) => {
-        try {
-            const response = await axios.post('http://192.168.137.1/api/delete.php', {
-                id: id
-            });
-            Alert.alert('Success', response.data.Message);
-            fetchData(); // Refresh the list after deletion
-        } catch (error) {
-            console.error('Error deleting item:', error);
-            Alert.alert('Error', 'Error deleting item. Please try again.');
-        }
+
+        Alert.alert('Delete Employee!', 'Are you sure to delete the employee account from database', [
+            {
+                text: 'Cancel',
+                onPress: () => { },
+                style: 'cancel',
+            },
+            {
+                text: 'OK', onPress: async () => {
+                    try {
+                        const response = await axios.post('http://192.168.137.1/api/delete.php', {
+                            id: id
+                        });
+                        Alert.alert('Success', response.data.Message);
+                        fetchData(); // Refresh the list after deletion
+                    } catch (error) {
+                        console.error('Error deleting item:', error);
+                        Alert.alert('Error', 'Error deleting item. Please try again.');
+                    }
+                }
+            },
+        ]);
+
     };
 
     const editItem = (item) => {
@@ -60,39 +75,75 @@ const FetchAllEmployeeScreen = () => {
             });
             Alert.alert('Success', response.data.Message);
             setModalVisible(false);
-            fetchData(); // Refresh the list after update. 
+            fetchData(); // Refresh the list after update
         } catch (error) {
             console.error('Error updating item:', error);
             Alert.alert('Error', 'Error updating item. Please try again.');
         }
     };
 
-    const renderItem = ({ item }) => (
+    const handleSearch = (text) => {
+        setSearchQuery(text);
+    };
 
+    const renderItem = ({ item }) => (
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('EmployeeDetailScreen', { employee: item })}>
-            <View style={{ flexDirection: 'row', gap: 15 }}>
-                <Image source={{ uri: item.Image }} style={{ width: 100, height: 100 }} />
-                <Text style={styles.name}>{item.Id}</Text>
-                <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+                {
+                    item.Image ?
+                        <Image source={{ uri: item.Image }} style={styles.image} /> :
+                        <Image source={require('../assets/user.png')} style={styles.image} />
+                }
+                <View style={{ marginLeft: 10, flex: 1 }}>
                     <Text style={styles.name}>{item.Name}</Text>
-                    <Text style={styles.mobile}>{item.Mobile}</Text>
+                    {/* <Text style={styles.mobile}>Mobile: {item.Mobile}</Text> */}
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button title="Edit" onPress={() => editItem(item)} />
-                    <Button title="Delete" onPress={() => deleteItem(item.Id)} />
+                    <TouchableOpacity
+                        onPress={() => editItem(item)}
+                        style={{
+                            backgroundColor: theme.themeColor,
+                            paddingHorizontal: 16,
+                            paddingVertical: 10,
+                            borderRadius: 8,
+                        }}>
+                        <Text style={{ color: theme.text, fontSize: 15 }}>Edit</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => deleteItem(item.Id)}
+                        style={{
+                            backgroundColor: theme.themeColor,
+                            paddingHorizontal: 16,
+                            paddingVertical: 10,
+                            borderRadius: 8,
+                        }}>
+                        <Text style={{ color: theme.text, fontSize: 15 }}>Delete</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </TouchableOpacity>
     );
 
+    const filteredData = data.filter(item =>
+        item.Name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <View style={styles.container}>
+            <TextInput
+                style={styles.searchBar}
+                placeholder="Search by name"
+                value={searchQuery}
+                onChangeText={handleSearch}
+            />
             {loading ? (
                 <Text>Loading...</Text>
             ) : (
                 <FlatList
-                    data={data}
-                    keyExtractor={(item) => item.Id?.toString()}
+                    data={filteredData}
+                    keyExtractor={(item) => item.Id.toString()}
                     renderItem={renderItem}
                 />
             )}
@@ -122,19 +173,33 @@ const FetchAllEmployeeScreen = () => {
                         placeholder="Password"
                         value={password}
                         onChangeText={setPassword}
-                        secureTextEntry={true}
+                        secureTextEntry={false}
                     />
                     <View style={styles.buttonContainer}>
-                        <Button title="Update" onPress={updateItem} />
-                        <Button title="Cancel" onPress={() => setModalVisible(false)} />
+                        <TouchableOpacity onPress={updateItem}
+                            style={{
+                                backgroundColor: theme.themeColor,
+                                paddingHorizontal: 16,
+                                paddingVertical: 10,
+                                borderRadius: 8,
+                            }}>
+                            <Text style={{ color: theme.text, fontSize: 15 }}> Update</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setModalVisible(false)}
+                            style={{
+                                backgroundColor: theme.themeColor,
+                                paddingHorizontal: 16,
+                                paddingVertical: 10,
+                                borderRadius: 8,
+                            }}>
+                            <Text style={{ color: theme.text, fontSize: 15 }}>Cancle</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
         </View>
     );
 };
-
-export default FetchAllEmployeeScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -143,12 +208,18 @@ const styles = StyleSheet.create({
         backgroundColor: theme.background,
     },
     item: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        padding: 8,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 10,
+        marginVertical: 2.5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     name: {
         fontSize: 18,
@@ -160,14 +231,17 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        gap: 10,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 18,
     },
     modalView: {
         margin: 20,
-        backgroundColor: '#0e0e0e',
+        backgroundColor: '#494651',
         borderRadius: 20,
         padding: 35,
         alignItems: 'center',
+        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -175,17 +249,35 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5
+        elevation: 5,
     },
     input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 20,
-        padding: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
         width: '100%',
+        borderRadius: 12,
     },
-    button: {
-        marginLeft: 10,
+    searchBar: {
+        height: 45,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        width: '100%',
+        backgroundColor: '#3a3a42',
+        borderRadius: 15,
+        fontSize: 16
+    },
+    image: {
+        width: 50,
+        height: 50,
+        borderRadius: 50,
     },
 });
+
+export default FetchAllEmployeeScreen;
