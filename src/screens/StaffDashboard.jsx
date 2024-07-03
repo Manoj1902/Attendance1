@@ -6,17 +6,19 @@ import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
 import { PermissionsAndroid } from 'react-native';
 
-
 var { width, height } = Dimensions.get('window')
-const HomeScreen = ({ navigation }) => {
+const StaffDashboard = ({ navigation, route }) => {
+    const { employeeName, employeeMobile } = route.params;
     const [imageUri, setImageUri] = useState(null);
     const [location, setLocation] = useState(null);
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [cameraRef, setCameraRef] = useState(null);
+    const [uploadBtnDisabled, setUploadBtnDisabled] = useState(true)
 
     useEffect(() => {
         requestLocationPermission();
+        enableUpoadBtn()
     }, []);
 
     const requestLocationPermission = async () => {
@@ -79,8 +81,8 @@ const HomeScreen = ({ navigation }) => {
             type: 'image/jpeg',
             name: 'photo.jpg',
         });
-        formData.append('date', date);
-        formData.append('time', time);
+        formData.append('attendance_date', date);
+        formData.append('attendance_time', time);
         formData.append('location', location);
 
         try {
@@ -88,15 +90,16 @@ const HomeScreen = ({ navigation }) => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                timeout: 60000, // Adjust the timeout as needed
             });
             Alert.alert('Success', response.data.message);
             openCameraScreen();
-
         } catch (error) {
             console.error('Error uploading image:', error);
             Alert.alert('Error', 'Failed to upload image. Please try again.');
         }
     };
+
 
     const openCameraScreen = () => {
         setImageUri(null)
@@ -106,12 +109,17 @@ const HomeScreen = ({ navigation }) => {
         setCameraRef(null)
     }
 
+    const enableUpoadBtn = () => {
+        setTimeout(() => {
+            setUploadBtnDisabled(false)
+        }, 8000);
+    }
+
     return (
         <View style={styles.container}>
             {imageUri ? (
                 <View style={styles.capturedInfo}>
                     <View>
-                        {/* <Text>Image</Text> */}
                         <Image
                             source={{ uri: imageUri }}
                             style={{
@@ -128,10 +136,11 @@ const HomeScreen = ({ navigation }) => {
                         <Text>Date: {date}</Text>
                         <Text>Time: {time}</Text>
                         <Text>Location: {location}</Text>
+                        <Text>Mobile: {employeeMobile}</Text>
                     </View>
 
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity onPress={uploadImage} style={styles.button}>
+                        <TouchableOpacity onPress={uploadImage} style={styles.button} disabled={uploadBtnDisabled}>
                             <Text style={styles.buttonText}>Upload Image</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={openCameraScreen} style={styles.button}>
@@ -147,8 +156,7 @@ const HomeScreen = ({ navigation }) => {
                         type={RNCamera.Constants.Type.front}
                         captureAudio={false}
                     >
-                        <TouchableOpacity onPress={takePicture} style={styles.button}>
-                            {/* <Text style={styles.buttonText}>Capture Image</Text> */}
+                        <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
                         </TouchableOpacity>
                     </RNCamera>
                     <View style={styles.captureContainer}>
@@ -162,7 +170,6 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: theme.background
     },
@@ -181,11 +188,20 @@ const styles = StyleSheet.create({
         marginTop: 25,
     },
     button: {
+        flex: 0,
+        backgroundColor: theme.themeColor,
+        borderRadius: 12,
+        padding: 15,
+        paddingHorizontal: 20,
+        alignSelf: 'center',
+        margin: 20,
+    },
+    captureButton: {
         width: 80,
         height: 80,
         flex: 0,
-        backgroundColor: '#fff',
-        borderRadius: 99999,
+        backgroundColor: "#FFFFFF",
+        borderRadius: 9999,
         padding: 15,
         paddingHorizontal: 20,
         alignSelf: 'center',
@@ -193,8 +209,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontSize: 14,
-        color: '#000',
+        color: theme.text,
     },
 });
 
-export default HomeScreen;
+export default StaffDashboard;

@@ -16,7 +16,7 @@ const EmployeeDetailScreen = ({ route }) => {
             ) : (
                 <Text>No Image Available</Text>
             )}
-            <Text style={styles.label}>{employee.Name}</Text>
+            <Text style={styles.nameLabel}>{employee.Name}</Text>
             <View style={styles.employeeDetailsContainer}>
                 <View style={styles.employeeDetails}>
                     <Icon style={{ width: 35, height: 35, textAlign: 'center', justifyContent: 'center', alignItems: 'center' }} name="mobile-phone" size={30} color="white" />
@@ -56,6 +56,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 10,
         color: theme.text
+        // textAlign: 'center'
+    },
+    nameLabel: {
+        fontSize: 28,
+        marginBottom: 10,
+        color: theme.text,
+        fontWeight: 'bold'
         // textAlign: 'center'
     },
     employeeDetailsContainer: {

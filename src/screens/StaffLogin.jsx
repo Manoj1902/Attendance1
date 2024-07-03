@@ -1,30 +1,29 @@
-import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { theme } from '../theme'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/Ionicons'
-import { version } from '../../package.json'
-import { Pressable } from 'react-native'
-import axios from 'axios'
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { theme } from '../theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { version } from '../../package.json';
+import { Pressable } from 'react-native';
+import axios from 'axios';
 
+var { width, height } = Dimensions.get('window');
 
-var { width, height } = Dimensions.get('window')
-
-const AdminLoginScreen = ({ navigation }) => {
-
+const StaffLogin = ({ navigation }) => {
     const [Mobile, setMobile] = useState('');
     const [password, setPassword] = useState('');
-    const [hidePassword, setHidePassword] = useState(true)
+    const [hidePassword, setHidePassword] = useState(true);
 
     const handleLogin = async () => {
         try {
             const response = await axios.post('http://192.168.137.1/api/login.php', {
                 Mobile: Mobile,
-                Password: password
+                Password: password,
             });
             if (response.data.Status) {
+                const { employeeName, employeeMobile } = response.data; // Assuming response includes these details
                 Alert.alert('Success', response.data.Message);
-                navigation.navigate('StaffDashboard'); // Replace 'Home' with the name of your home screen
+                navigation.navigate('StaffDashboard', { employeeName, employeeMobile });
             } else {
                 Alert.alert('Error', response.data.Message);
             }
@@ -44,36 +43,26 @@ const AdminLoginScreen = ({ navigation }) => {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <SafeAreaView >
-
-
-                {/* Header */}
+            <SafeAreaView>
                 <View style={styles.header}>
-
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
-
                     <Text style={styles.headerText}>Staff Login</Text>
-
                     <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
-
                 </View>
             </SafeAreaView>
 
             <View style={styles.loginImage}>
-                <Image source={require('../assets/staff_login.png')}
-                    style={{ height: 165, width: 280, justifyContent: 'center' }} />
+                <Image source={require('../assets/staff_login.png')} style={{ height: 165, width: 280, justifyContent: 'center' }} />
             </View>
 
             <View style={styles.card}>
                 <Text style={styles.cardTitle}>Login</Text>
-
                 <View style={styles.input}>
                     <View>
-
                         <Text style={styles.inputTitle}>Username</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
@@ -82,12 +71,11 @@ const AdminLoginScreen = ({ navigation }) => {
                                 placeholderTextColor={"#808080"} placeholder="Mobile"
                                 value={Mobile}
                                 onChangeText={setMobile}
-                                keyboardType="Mobile-address"
+                                keyboardType="phone-pad"
                             />
                         </View>
                     </View>
                     <View>
-
                         <Text style={styles.inputTitle}>Password</Text>
                         <View style={styles.inputContainer}>
                             <Icon name='lock-closed' padding={8} size={20} color={theme.blackText} />
@@ -117,17 +105,16 @@ const AdminLoginScreen = ({ navigation }) => {
                             </Text>
                         </Pressable>
                     </View>
-                    <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} >
+                    <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-
         </ScrollView>
-    )
+    );
 }
 
-export default AdminLoginScreen
+export default StaffLogin;
 
 const styles = StyleSheet.create({
     container: {
@@ -182,7 +169,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     input: {
-        // backgroundColor: 'red',
         marginTop: 28,
         padding: 8,
         gap: 30
@@ -195,8 +181,6 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        // justifyContent: '',
-        // backgroundColor: 'blue',
         gap: 10,
         borderRadius: 10,
         borderWidth: 1.5,
@@ -210,13 +194,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         elevation: 3,
         borderRadius: 10
-
     },
     loginBtnText: {
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
         color: theme.text,
-
     }
-})
+});
