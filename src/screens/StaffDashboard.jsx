@@ -1,24 +1,23 @@
-import { theme } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
 import { PermissionsAndroid } from 'react-native';
+import { theme } from '../theme';
 
-var { width, height } = Dimensions.get('window')
-const StaffDashboard = ({ navigation, route }) => {
-    const { employeeName, employeeMobile } = route.params;
+const { width, height } = Dimensions.get('window');
+
+const StaffDashboard = ({ employee }) => {
+    const { Name: employeeName, Mobile: employeeMobile } = employee;
     const [imageUri, setImageUri] = useState(null);
     const [location, setLocation] = useState(null);
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [cameraRef, setCameraRef] = useState(null);
-    const [uploadBtnDisabled, setUploadBtnDisabled] = useState(true)
 
     useEffect(() => {
         requestLocationPermission();
-        enableUpoadBtn()
     }, []);
 
     const requestLocationPermission = async () => {
@@ -81,6 +80,9 @@ const StaffDashboard = ({ navigation, route }) => {
             type: 'image/jpeg',
             name: 'photo.jpg',
         });
+        formData.append('name', employeeName);
+        formData.append('mobile', employeeMobile);
+        formData.append('attendance', 'present');
         formData.append('attendance_date', date);
         formData.append('attendance_time', time);
         formData.append('location', location);
@@ -90,57 +92,41 @@ const StaffDashboard = ({ navigation, route }) => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                timeout: 60000, // Adjust the timeout as needed
             });
             Alert.alert('Success', response.data.message);
             openCameraScreen();
+
         } catch (error) {
             console.error('Error uploading image:', error);
             Alert.alert('Error', 'Failed to upload image. Please try again.');
         }
     };
 
-
     const openCameraScreen = () => {
-        setImageUri(null)
-        setDate('')
-        setTime('')
-        setLocation(null)
-        setCameraRef(null)
-    }
-
-    const enableUpoadBtn = () => {
-        setTimeout(() => {
-            setUploadBtnDisabled(false)
-        }, 8000);
-    }
+        setImageUri(null);
+        setDate('');
+        setTime('');
+        setLocation(null);
+        setCameraRef(null);
+    };
 
     return (
         <View style={styles.container}>
             {imageUri ? (
                 <View style={styles.capturedInfo}>
-                    <View>
-                        <Image
-                            source={{ uri: imageUri }}
-                            style={{
-                                width: 200,
-                                height: 200,
-                                borderRadius: 100,
-                                marginTop: 25,
-                                borderWidth: 4,
-                                borderColor: '#535C68'
-                            }} />
-                    </View>
-
+                    <Image
+                        source={{ uri: imageUri }}
+                        style={styles.image}
+                    />
                     <View style={{ alignItems: 'center' }}>
+                        <Text>Name: {employeeName}</Text>
+                        <Text>Mobile: {employeeMobile}</Text>
                         <Text>Date: {date}</Text>
                         <Text>Time: {time}</Text>
                         <Text>Location: {location}</Text>
-                        <Text>Mobile: {employeeMobile}</Text>
                     </View>
-
                     <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity onPress={uploadImage} style={styles.button} disabled={uploadBtnDisabled}>
+                        <TouchableOpacity onPress={uploadImage} style={styles.button}>
                             <Text style={styles.buttonText}>Upload Image</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={openCameraScreen} style={styles.button}>
@@ -157,10 +143,9 @@ const StaffDashboard = ({ navigation, route }) => {
                         captureAudio={false}
                     >
                         <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
+                            <Text style={styles.buttonText}>Capture</Text>
                         </TouchableOpacity>
                     </RNCamera>
-                    <View style={styles.captureContainer}>
-                    </View>
                 </View>
             )}
         </View>
@@ -175,7 +160,6 @@ const styles = StyleSheet.create({
     },
     capturedInfo: {
         alignItems: 'center',
-        gap: 10
     },
     preview: {
         width: width,
@@ -183,33 +167,35 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
-    captureContainer: {
-        flexDirection: 'column',
+    image: {
+        width: 200,
+        height: 200,
+        borderRadius: 100,
         marginTop: 25,
+        borderWidth: 4,
+        borderColor: '#535C68',
     },
     button: {
-        flex: 0,
-        backgroundColor: theme.themeColor,
-        borderRadius: 12,
-        padding: 15,
-        paddingHorizontal: 20,
-        alignSelf: 'center',
-        margin: 20,
-    },
-    captureButton: {
-        width: 80,
-        height: 80,
-        flex: 0,
-        backgroundColor: "#FFFFFF",
-        borderRadius: 9999,
-        padding: 15,
-        paddingHorizontal: 20,
-        alignSelf: 'center',
-        margin: 20,
+        width: 150,
+        height: 40,
+        backgroundColor: '#007BFF',
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
     },
     buttonText: {
-        fontSize: 14,
-        color: theme.text,
+        color: '#fff',
+        fontSize: 16,
+    },
+    captureButton: {
+        flex: 0,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        padding: 10,
+        paddingHorizontal: 20,
+        alignSelf: 'center',
+        margin: 20,
     },
 });
 
