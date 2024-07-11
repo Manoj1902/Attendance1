@@ -143,7 +143,7 @@ const StaffDashboard = ({ employee }) => {
                         captureAudio={false}
                     >
                         <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
-                            <Text style={styles.buttonText}>Capture</Text>
+                            {/* <Text style={styles.buttonText}>Capture</Text> */}
                         </TouchableOpacity>
                     </RNCamera>
                 </View>
@@ -189,9 +189,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     captureButton: {
-        flex: 0,
+        width: 80,
+        height: 80,
         backgroundColor: '#fff',
-        borderRadius: 5,
+        borderRadius: 9999,
         padding: 10,
         paddingHorizontal: 20,
         alignSelf: 'center',
