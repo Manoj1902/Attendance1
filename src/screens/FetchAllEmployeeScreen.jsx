@@ -22,8 +22,9 @@ const FetchAllEmployeeScreen = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://192.168.137.1/api/fetch.php');
+            const response = await axios.get('http://attendance.mobitechllp.com/fetch.php');
             setData(response.data);
+            console.log(response.data)
             setLoading(false);
         } catch (error) {
             console.error(error);
@@ -42,7 +43,7 @@ const FetchAllEmployeeScreen = () => {
             {
                 text: 'OK', onPress: async () => {
                     try {
-                        const response = await axios.post('http://192.168.137.1/api/delete.php', {
+                        const response = await axios.post('http://attendance.mobitechllp.com/delete.php', {
                             id: id
                         });
                         Alert.alert('Success', response.data.Message);
@@ -67,7 +68,7 @@ const FetchAllEmployeeScreen = () => {
 
     const updateItem = async () => {
         try {
-            const response = await axios.post('http://192.168.137.1/api/update.php', {
+            const response = await axios.post('http://attendance.mobitechllp.com/update.php', {
                 Id: currentItem.Id,
                 Name: name,
                 Mobile: mobile,

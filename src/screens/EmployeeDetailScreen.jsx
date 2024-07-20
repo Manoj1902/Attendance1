@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, StatusBar, ToastAndroid } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { theme } from '../theme';
 import axios from 'axios';
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { version } from '../../package.json'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { version } from '../../package.json';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-
 
 const { width, height } = Dimensions.get('window');
 const EmployeeDetailScreen = ({ route, navigation }) => {
@@ -21,11 +19,17 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
         fetchAttendance();
     }, [selectedDate]);
 
+    useEffect(() => {
+        if (attendanceDetails.length > 0) {
+            fetchLocationNames();
+        }
+    }, [attendanceDetails]);
+
     const fetchAttendance = async () => {
         try {
             const month = selectedDate.getMonth() + 1;
             const year = selectedDate.getFullYear();
-            const response = await axios.post('http://192.168.137.1/api/fetch_attendance.php', {
+            const response = await axios.post('http://attendance.mobitechllp.com/fetch_attendance.php', {
                 Mobile: employee.Mobile,
                 Month: month,
                 Year: year
@@ -36,19 +40,40 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
         }
     };
 
+    const fetchLocationNames = async () => {
+        const locations = attendanceDetails.map(attendance => attendance.Location);
+        const uniqueLocations = [...new Set(locations)];
+        const promises = uniqueLocations.map(location => reverseGeocode(location));
+        const results = await Promise.all(promises);
+
+        const locationMap = {};
+        results.forEach((result, index) => {
+            locationMap[uniqueLocations[index]] = result;
+        });
+        setLocationNames(locationMap);
+    };
+
+    const reverseGeocode = async (location) => {
+        try {
+            const [latitude, longitude] = location.split(',').map(Number);
+            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            if (response.data.display_name) {
+                const locationName = response.data.display_name.split(' ').slice(0, 2.5).join(' ');
+                return locationName;
+            } else {
+                return 'Unknown Location';
+            }
+        } catch (error) {
+            console.error('Error fetching location name:', error);
+            return 'Unknown Location';
+        }
+    };
+
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || new Date();
         setShowPicker(false);
         setSelectedDate(currentDate);
     };
-
-
-
-
-
-
-    // console.log('Employee Image URL:', employee.Image); // Log the image URL for debugging.
-
 
     const appVersion = () => {
         ToastAndroid.showWithGravity(
@@ -57,30 +82,22 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
             ToastAndroid.CENTER,
         );
     };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <StatusBar backgroundColor={theme.background} />
-            <SafeAreaView >
-
-
+            <SafeAreaView>
                 {/* Header */}
                 <View style={styles.header}>
-
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
-
                     <Text style={styles.headerText}>Admin Login</Text>
-
                     <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
-
                 </View>
             </SafeAreaView>
-
-
-
             {employee.Image ? (
                 <Image source={{ uri: employee.Image }} style={styles.image} />
             ) : (
@@ -118,17 +135,19 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
                 <View style={styles.attendanceItem}>
                     <Text style={styles.attendanceText}>Date</Text>
                     <Text style={styles.attendanceText}>Time</Text>
-                    {/* <Text style={styles.attendanceText}>Location</Text> */}
+                    <Text style={styles.attendanceText}>Location</Text>
                     <Text style={styles.attendanceText}>Status</Text>
                 </View>
 
                 {attendanceDetails.length > 0 ? (
                     attendanceDetails.map((attendance, index) => (
                         <View key={index} style={styles.attendanceItem}>
-                            <Text style={styles.attendanceText}>{attendance.Attendance_date}</Text>
-                            <Text style={styles.attendanceText}>{attendance.Attendance_time}</Text>
-                            {/* <Text style={styles.attendanceText}>{attendance.Location}</Text> */}
-                            <Text style={styles.attendanceText}>{attendance.attendance}</Text>
+                            <Text style={styles.attendanceText2}>{attendance.Attendance_date}</Text>
+                            <Text style={styles.attendanceText2}>{attendance.Attendance_time}</Text>
+                            <Text style={styles.attendanceText2}>
+                                {locationNames[attendance.Location] || 'Loading...'}
+                            </Text>
+                            <Text style={styles.attendanceText2}>{attendance.attendance}</Text>
                         </View>
                     ))
                 ) : (
@@ -228,7 +247,13 @@ const styles = StyleSheet.create({
     attendanceText: {
         fontSize: 16,
         color: theme.text,
-        marginBottom: 5
+        marginBottom: 5,
+        fontWeight: 'bold'
+    },
+    attendanceText2: {
+        fontSize: 16,
+        color: theme.text,
+        marginBottom: 5,
     },
     dateButton: {
         backgroundColor: '#4F5068',

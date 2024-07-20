@@ -59,7 +59,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
         if (uName.length == 0 || uMobile.length == 0 || uSalary.length == 0 || uPassword.length == 0 || imageURI == null) {
             Alert.alert("Required Field is Missing");
         } else {
-            var InsertURL = 'http://192.168.137.1/api/insert.php';
+            var InsertURL = 'http://attendance.mobitechllp.com/insert.php';
 
             var headers = {
                 'Accept': 'application/json',
@@ -110,7 +110,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
 
-                    <Text style={styles.headerText}>Insert Employee</Text>
+                    <Text style={styles.headerText}>Add New Employee</Text>
 
                     <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                         <Icon name="information-circle" size={35} color="white" />
@@ -144,7 +144,7 @@ const InsertEmployeeScreen = ({ navigation }) => {
                         <View>
                             <Text style={styles.inputTitle}>Salary</Text>
                             <View style={styles.inputContainer}>
-                                <Icon name='at-sharp' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
+                                <Icon name='wallet' padding={8} size={20} color={theme.text} style={{ borderRadius: 8 }} />
                                 <TextInput keyboardType='number-pad' style={{ width: width * 0.83, color: theme.text, borderRadius: 8 }} placeholderTextColor={"#b0b0b0"} placeholder='Salary' value={salary} onChangeText={value => setSalary(value)} />
                             </View>
                         </View>

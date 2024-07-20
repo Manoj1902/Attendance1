@@ -45,14 +45,14 @@ const AdminDashboard = ({ navigation }) => {
                             textAlign: 'center',
                             fontSize: 18,
                             color: theme.text
-                        }}>Insert Employee</Text>
+                        }}>Add Employee</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.insertScreenBtn} onPress={() => navigation.navigate('ShowAllEmployee')}>
                         <Text style={{
                             textAlign: 'center',
                             fontSize: 18,
                             color: theme.text
-                        }}>Show Employee</Text>
+                        }}>Show All Employee</Text>
                     </TouchableOpacity>
                 </View>
             </View>

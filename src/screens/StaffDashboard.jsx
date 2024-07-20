@@ -88,7 +88,7 @@ const StaffDashboard = ({ employee }) => {
         formData.append('location', location);
 
         try {
-            const response = await axios.post('http://192.168.137.1/api/upload.php', formData, {
+            const response = await axios.post('http://attendance.mobitechllp.com/upload.php', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

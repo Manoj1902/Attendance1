@@ -18,7 +18,7 @@ const StaffLogin = ({ navigation }) => {
     const handleLogin = async () => {
         try {
             console.log('Attempting to log in with mobile:', mobile, 'and password:', password);
-            const response = await axios.post('http://192.168.137.1/api/login.php', {
+            const response = await axios.post('http://attendance.mobitechllp.com/login.php', {
                 mobile,
                 password
             });

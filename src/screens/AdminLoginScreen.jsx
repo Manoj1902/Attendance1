@@ -112,9 +112,9 @@ const AdminLoginScreen = ({ navigation }) => {
                                         <Icon name='eye-outline' padding={8} size={20} color={theme.blackText} />}
                             </TouchableOpacity>
                         </View>
-                        <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
+                        {/* <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
                             <Text style={{ color: theme.themeColor, textAlign: 'right', marginTop: 6, fontWeight: '600' }}>Forgot Password?</Text>
-                        </Pressable>
+                        </Pressable> */}
                     </View>
                     <TouchableOpacity style={{
                         backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor,
@@ -128,7 +128,7 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
 
-                    <View style={{
+                    {/* <View style={{
                         justifyContent: 'center',
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -143,7 +143,7 @@ const AdminLoginScreen = ({ navigation }) => {
                         <TouchableOpacity onPress={() => navigation.navigate('AdminSignUp')} >
                             <Text style={{ color: theme.themeColor, fontWeight: 'bold', fontSize: 18 }}> Sign Up.</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
             </View>
 
