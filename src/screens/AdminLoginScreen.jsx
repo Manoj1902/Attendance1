@@ -128,6 +128,24 @@ const AdminLoginScreen = ({ navigation }) => {
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
 
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: theme.blackText }}>Click here for </Text>
+                        <TouchableOpacity style={{}} onPress={() => navigation.navigate('Staff')} disabled={disableLoginBtn}>
+                            <Text style={{
+                                color: theme.themeColor,
+                                fontWeight: '800',
+                                fontSize: 16
+                            }}>
+                                Staff Login !
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+
                     {/* <View style={{
                         justifyContent: 'center',
                         flexDirection: 'row',

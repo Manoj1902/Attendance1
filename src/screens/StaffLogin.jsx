@@ -119,6 +119,23 @@ const StaffLogin = ({ navigation }) => {
                                 }} onPress={handleLogin} disabled={disableLoginBtn}>
                                     <Text style={styles.loginBtnText}>Login</Text>
                                 </TouchableOpacity>
+
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <Text style={{ color: theme.blackText }}>Click here if you are </Text>
+                                    <TouchableOpacity style={{}} onPress={() => navigation.navigate('Admin')} disabled={disableLoginBtn}>
+                                        <Text style={{
+                                            color: theme.themeColor,
+                                            fontWeight: '800',
+                                            fontSize: 16
+                                        }}>
+                                            Admin !
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     </ScrollView>
