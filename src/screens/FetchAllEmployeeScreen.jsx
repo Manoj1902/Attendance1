@@ -24,10 +24,11 @@ const FetchAllEmployeeScreen = () => {
         try {
             const response = await axios.get('http://attendance.mobitechllp.com/fetch.php');
             setData(response.data);
-            console.log(response.data)
+            // console.log(response.data)
             setLoading(false);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
+            Alert.error(error)
             setLoading(false);
         }
     };
@@ -49,8 +50,9 @@ const FetchAllEmployeeScreen = () => {
                         Alert.alert('Success', response.data.Message);
                         fetchData(); // Refresh the list after deletion
                     } catch (error) {
-                        console.error('Error deleting item:', error);
-                        Alert.alert('Error', 'Error deleting item. Please try again.');
+                        // console.error('Error deleting item:', error);
+                        Alert.alert('Error', 'Error deleting item:', error)
+                        // Alert.alert('Error', 'Error deleting item. Please check network.');
                     }
                 }
             },
@@ -78,8 +80,8 @@ const FetchAllEmployeeScreen = () => {
             setModalVisible(false);
             fetchData(); // Refresh the list after update
         } catch (error) {
-            console.error('Error updating item:', error);
-            Alert.alert('Error', 'Error updating item. Please try again.');
+            Alert.alert('Error', 'Error updating item:', error);
+            // Alert.alert('Error', 'Error updating item. Please check network.');
         }
     };
 
@@ -94,7 +96,7 @@ const FetchAllEmployeeScreen = () => {
                 {
                     item.Image ?
                         <Image source={{ uri: item.Image }} style={styles.image} /> :
-                        <Image source={require('../assets/user.png')} style={styles.image} />
+                        <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/user.png' }} style={styles.image} />
                 }
                 <View style={{ marginLeft: 10, flex: 1 }}>
                     <Text style={styles.name}>{item.Name}</Text>

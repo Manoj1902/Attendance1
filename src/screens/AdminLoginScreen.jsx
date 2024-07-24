@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { theme } from '../theme'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -29,11 +29,11 @@ const AdminLoginScreen = ({ navigation }) => {
                 await signInWithEmailAndPassword(auth, adminEmail, adminPassword)
                 setDisableLoginBtn(true)
             } catch (error) {
-                console.log("Error while Login: ", error)
+                Alert.alert('Error', "Error while Login: ", error)
                 setDisableLoginBtn(false)
             }
         } else {
-            console.log('please enter fields')
+            Alert.alert('please enter fields')
             setDisableLoginBtn(false)
         }
         setDisableLoginBtn(false)
@@ -79,10 +79,10 @@ const AdminLoginScreen = ({ navigation }) => {
             </SafeAreaView>
 
             <View style={styles.loginImage}>
-                <Image source={require('../assets/login.png')}
+                <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }}
                     style={{
-                        height: 165,
-                        width: 165,
+                        height: 185,
+                        width: 185,
                         justifyContent: 'center'
                     }} />
             </View>

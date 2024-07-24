@@ -26,9 +26,15 @@ const HomeScreen = ({ navigation }) => {
                 }
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('Location permission granted');
+                // console.log('Location permission granted');
+
             } else {
-                console.log('Location permission denied');
+                // console.log('Location permission denied');
+                ToastAndroid.showWithGravity(
+                    "Location permission not granted",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER
+                )
             }
         } catch (err) {
             console.warn(err);

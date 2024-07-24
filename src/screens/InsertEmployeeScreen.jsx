@@ -27,9 +27,11 @@ const InsertEmployeeScreen = ({ navigation }) => {
     const selectImage = () => {
         launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (response) => {
             if (response.didCancel) {
-                console.log('User cancelled image picker');
+                // console.log('User cancelled image picker');
+                // Alert.alert('User cancelled image picker');
             } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
+                Alert.alert('Error', 'ImagePicker Error: ', response.error);
+                // console.log('ImagePicker Error: ', response.error);
             } else {
                 const source = response.assets[0].base64;
                 setImageURI(`data:image/jpeg;base64,${source}`);

@@ -17,13 +17,13 @@ const StaffLogin = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            console.log('Attempting to log in with mobile:', mobile, 'and password:', password);
+            // console.log('Attempting to log in with mobile:', mobile, 'and password:', password);
             const response = await axios.post('http://attendance.mobitechllp.com/login.php', {
-                mobile,
-                password
+                mobile
+                // password
             });
 
-            console.log('Login response:', response.data);
+            // console.log('Login response:', response.data);
 
             if (response.data.status === 'success') {
                 setEmployee(response.data.employee);
@@ -71,7 +71,7 @@ const StaffLogin = ({ navigation }) => {
                         </SafeAreaView>
 
                         <View style={styles.loginImage}>
-                            <Image source={require('../assets/staff_login.png')}
+                            <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/staff_login.png' }}
                                 style={{
                                     height: 165,
                                     width: 280,
