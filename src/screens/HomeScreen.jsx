@@ -87,12 +87,13 @@ const styles = StyleSheet.create({
     },
     header: {
         width: width,
-        height: height * 0.07,
+        // height: height * 0.07,
         backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 12,
+        paddingVertical: 20,
+        paddingHorizontal: 16,
         shadowColor: "#000000",
         shadowOffset: {
             width: 0,
@@ -101,6 +102,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         elevation: 3,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
     },
     headerText: {
         fontSize: 26,

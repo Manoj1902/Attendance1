@@ -32,6 +32,7 @@ const App = () => {
           <Stack.Screen name='InsertEmployee' options={{ headerShown: false }} component={InsertEmployeeScreen} />
           <Stack.Screen name='ShowAllEmployee' options={{ headerShown: false }} component={FetchAllEmployeeScreen} />
           <Stack.Screen name='EmployeeDetailScreen' options={{ headerShown: false }} component={EmployeeDetailScreen} />
+          <Stack.Screen name='AdminSignUp' options={{ headerShown: false }} component={SignUpAdminScreen} />
           {/* <Stack.Screen name='StaffDashboard' options={{ headerShown: false }} component={StaffDashboard} /> */}
         </Stack.Navigator>
       </NavigationContainer>
@@ -42,7 +43,6 @@ const App = () => {
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='Home' options={{ headerShown: false }} component={HomeScreen} />
           <Stack.Screen name='Admin' options={{ headerShown: false }} component={AdminLoginScreen} />
-          <Stack.Screen name='AdminSignUp' options={{ headerShown: false }} component={SignUpAdminScreen} />
           <Stack.Screen name='Staff' options={{ headerShown: false }} component={StaffLogin} />
           <Stack.Screen name='ForgotPassword' options={{ headerShown: false }} component={ForgotPasswrodScreen} />
           {/* <Stack.Screen name='AdminDashboard' options={{ headerShown: false }} component={AdminDashboard} /> */}

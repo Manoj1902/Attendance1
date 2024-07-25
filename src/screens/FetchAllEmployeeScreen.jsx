@@ -4,7 +4,8 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 
-var { width, height } = Dimensions.get('window')
+var { width, height } = Dimensions.get('window');
+
 const FetchAllEmployeeScreen = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,17 +25,14 @@ const FetchAllEmployeeScreen = () => {
         try {
             const response = await axios.get('http://attendance.mobitechllp.com/fetch.php');
             setData(response.data);
-            // console.log(response.data)
             setLoading(false);
         } catch (error) {
-            // console.error(error);
-            Alert.error(error)
+            Alert.alert('Error', error.message);
             setLoading(false);
         }
     };
 
     const deleteItem = async (id) => {
-
         Alert.alert('Delete Employee!', 'Are you sure to delete the employee account from database', [
             {
                 text: 'Cancel',
@@ -42,22 +40,18 @@ const FetchAllEmployeeScreen = () => {
                 style: 'cancel',
             },
             {
-                text: 'OK', onPress: async () => {
+                text: 'OK',
+                onPress: async () => {
                     try {
-                        const response = await axios.post('http://attendance.mobitechllp.com/delete.php', {
-                            id: id
-                        });
+                        const response = await axios.post('http://attendance.mobitechllp.com/delete.php', { id });
                         Alert.alert('Success', response.data.Message);
-                        fetchData(); // Refresh the list after deletion
+                        fetchData();
                     } catch (error) {
-                        // console.error('Error deleting item:', error);
-                        Alert.alert('Error', 'Error deleting item:', error)
-                        // Alert.alert('Error', 'Error deleting item. Please check network.');
+                        Alert.alert('Error', 'Error deleting item. Please check network.');
                     }
                 }
             },
         ]);
-
     };
 
     const editItem = (item) => {
@@ -78,10 +72,9 @@ const FetchAllEmployeeScreen = () => {
             });
             Alert.alert('Success', response.data.Message);
             setModalVisible(false);
-            fetchData(); // Refresh the list after update
+            fetchData();
         } catch (error) {
-            Alert.alert('Error', 'Error updating item:', error);
-            // Alert.alert('Error', 'Error updating item. Please check network.');
+            Alert.alert('Error', 'Error updating item. Please check network.');
         }
     };
 
@@ -90,39 +83,30 @@ const FetchAllEmployeeScreen = () => {
     };
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('EmployeeDetailScreen', { employee: item })}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                {
-                    item.Image ?
-                        <Image source={{ uri: item.Image }} style={styles.image} /> :
-                        <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/user.png' }} style={styles.image} />
-                }
-                <View style={{ marginLeft: 10, flex: 1 }}>
+        <TouchableOpacity
+            style={styles.item}
+            onPress={() => navigation.navigate('EmployeeDetailScreen', { employee: item })}
+        >
+            <View style={styles.itemRow}>
+                <Image
+                    source={{ uri: item.Image || 'http://attendance.mobitechllp.com/assets/user.png' }}
+                    style={styles.image}
+                />
+                <View style={styles.itemDetails}>
                     <Text style={styles.name}>{item.Name}</Text>
-                    {/* <Text style={styles.mobile}>Mobile: {item.Mobile}</Text> */}
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         onPress={() => editItem(item)}
-                        style={{
-                            backgroundColor: theme.themeColor,
-                            paddingHorizontal: 16,
-                            paddingVertical: 10,
-                            borderRadius: 8,
-                        }}>
-                        <Text style={{ color: theme.text, fontSize: 15 }}>Edit</Text>
+                        style={styles.editButton}
+                    >
+                        <Text style={styles.buttonText}>Edit</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
                         onPress={() => deleteItem(item.Id)}
-                        style={{
-                            backgroundColor: theme.themeColor,
-                            paddingHorizontal: 16,
-                            paddingVertical: 10,
-                            borderRadius: 8,
-                        }}>
-                        <Text style={{ color: theme.text, fontSize: 15 }}>Delete</Text>
+                        style={styles.deleteButton}
+                    >
+                        <Text style={styles.buttonText}>Delete</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -154,9 +138,7 @@ const FetchAllEmployeeScreen = () => {
                 animationType="slide"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}
+                onRequestClose={() => setModalVisible(!modalVisible)}
             >
                 <View style={styles.modalView}>
                     <TextInput
@@ -178,24 +160,18 @@ const FetchAllEmployeeScreen = () => {
                         onChangeText={setPassword}
                         secureTextEntry={false}
                     />
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={updateItem}
-                            style={{
-                                backgroundColor: theme.themeColor,
-                                paddingHorizontal: 16,
-                                paddingVertical: 10,
-                                borderRadius: 8,
-                            }}>
-                            <Text style={{ color: theme.text, fontSize: 15 }}> Update</Text>
+                    <View style={styles.modalButtonContainer}>
+                        <TouchableOpacity
+                            onPress={updateItem}
+                            style={styles.modalButton}
+                        >
+                            <Text style={styles.buttonText}>Update</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setModalVisible(false)}
-                            style={{
-                                backgroundColor: theme.themeColor,
-                                paddingHorizontal: 16,
-                                paddingVertical: 10,
-                                borderRadius: 8,
-                            }}>
-                            <Text style={{ color: theme.text, fontSize: 15 }}>Cancle</Text>
+                        <TouchableOpacity
+                            onPress={() => setModalVisible(false)}
+                            style={styles.modalButton}
+                        >
+                            <Text style={styles.buttonText}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -215,28 +191,64 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 10,
-        marginVertical: 2.5,
+        marginVertical: 5,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
+    },
+    itemRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    image: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+    },
+    itemDetails: {
+        marginLeft: 10,
+        flex: 1,
     },
     name: {
         fontSize: 18,
         fontWeight: 'bold',
     },
-    mobile: {
-        fontSize: 16,
-        color: '#555',
-    },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        gap: 18,
+        gap: 10,
+    },
+    editButton: {
+        backgroundColor: theme.themeColor,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    deleteButton: {
+        backgroundColor: theme.themeColor,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    buttonText: {
+        color: theme.text,
+        fontSize: 15,
+    },
+    searchBar: {
+        height: 45,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        width: '100%',
+        backgroundColor: '#3a3a42',
+        borderRadius: 15,
+        fontSize: 16,
     },
     modalView: {
         margin: 20,
@@ -244,11 +256,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 35,
         alignItems: 'center',
-        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
@@ -264,22 +275,16 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius: 12,
     },
-    searchBar: {
-        height: 45,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 20,
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-        width: '100%',
-        backgroundColor: '#3a3a42',
-        borderRadius: 15,
-        fontSize: 16
+    modalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10,
     },
-    image: {
-        width: 50,
-        height: 50,
-        borderRadius: 50,
+    modalButton: {
+        backgroundColor: theme.themeColor,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 8,
     },
 });
 

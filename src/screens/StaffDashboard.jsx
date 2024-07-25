@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions, Per
 import { RNCamera } from 'react-native-camera';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 import { theme } from '../theme';
 
 const { width, height } = Dimensions.get('window');
@@ -17,31 +18,33 @@ const StaffDashboard = ({ employee }) => {
     const [showButtons, setShowButtons] = useState(true);
     const [countdown, setCountdown] = useState(10);
 
-    useEffect(() => {
-        const requestLocationPermission = async () => {
-            try {
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                    {
-                        title: 'Location Permission',
-                        message: 'This app needs access to your location.',
-                        buttonNeutral: 'Ask Me Later',
-                        buttonNegative: 'Cancel',
-                        buttonPositive: 'OK',
+    useFocusEffect(
+        React.useCallback(() => {
+            const requestLocationPermission = async () => {
+                try {
+                    const granted = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                        {
+                            title: 'Location Permission',
+                            message: 'This app needs access to your location.',
+                            buttonNeutral: 'Ask Me Later',
+                            buttonNegative: 'Cancel',
+                            buttonPositive: 'OK',
+                        }
+                    );
+                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        console.log('Location permission granted');
+                    } else {
+                        console.log('Location permission denied');
                     }
-                );
-                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                    console.log('Location permission granted');
-                } else {
-                    console.log('Location permission denied');
+                } catch (err) {
+                    console.warn(err);
                 }
-            } catch (err) {
-                console.warn(err);
-            }
-        };
+            };
 
-        requestLocationPermission();
-    }, []);
+            requestLocationPermission();
+        }, [])
+    );
 
     useEffect(() => {
         let timer;
@@ -136,31 +139,12 @@ const StaffDashboard = ({ employee }) => {
                         source={{ uri: imageUri }}
                         style={styles.image}
                     />
-                    {/* NAME */}
-                    <Text style={styles.employeeNameTitle}>{employeeName}</Text>
-
-                    <View style={{
-                        alignItems: 'flex-start',
-                        backgroundColor: '#3F4056',
-                        paddingVertical: 18,
-                        paddingHorizontal: 18,
-                        marginHorizontal: 18,
-                        marginBottom: 18,
-                        width: width * 0.85,
-                        borderRadius: 10
-                    }}>
-                        <View style={{
-                            backgroundColor: '#4F5068',
-                            padding: 15,
-                            borderRadius: 10,
-                            width: '100%',
-                            gap: 8
-                        }}>
-                            <Text style={styles.currentDetailsItem}>Mobile: {employeeMobile}</Text>
-                            <Text style={styles.currentDetailsItem}>Date: {date}</Text>
-                            <Text style={styles.currentDetailsItem}>Time: {time}</Text>
-                            <Text style={styles.currentDetailsItem}>Location: {location}</Text>
-                        </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Text>Name: {employeeName}</Text>
+                        <Text>Mobile: {employeeMobile}</Text>
+                        <Text>Date: {date}</Text>
+                        <Text>Time: {time}</Text>
+                        <Text>Location: {location}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         {showButtons ? (
@@ -173,8 +157,7 @@ const StaffDashboard = ({ employee }) => {
                                 </TouchableOpacity>
                             </>
                         ) : (
-
-                            <Text style={styles.countdownText}>Please wait {countdown} sec.</Text>
+                            <Text style={styles.countdownText}>{countdown}</Text>
                         )}
                     </View>
                 </View>
@@ -200,7 +183,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: theme.background,
+        backgroundColor: theme.background
     },
     capturedInfo: {
         alignItems: 'center',
@@ -212,29 +195,25 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     image: {
-        width: 220,
-        height: 220,
-        borderRadius: 9999,
+        width: 200,
+        height: 200,
+        borderRadius: 100,
         marginTop: 25,
-        borderWidth: 8,
-        borderColor: '#4F5068',
+        borderWidth: 4,
+        borderColor: '#535C68',
     },
     button: {
-        width: width * 0.40,
-        height: 50,
+        width: 150,
+        height: 40,
         backgroundColor: '#007BFF',
-        borderRadius: 10,
+        borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
         margin: 10,
-        paddingVertical: 8,
-        paddingHorizontal: 12,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: '700',
-        textTransform: 'uppercase'
+        fontSize: 16,
     },
     captureButton: {
         width: 80,
@@ -247,20 +226,10 @@ const styles = StyleSheet.create({
         margin: 20,
     },
     countdownText: {
-        fontSize: 14,
+        fontSize: 24,
         color: theme.text,
         alignSelf: 'center',
         marginTop: 10,
-        borderRadius: 10,
-    },
-    employeeNameTitle: {
-        fontSize: 28,
-        fontWeight: '700',
-        marginVertical: 18
-    },
-    currentDetailsItem: {
-        fontSize: 16,
-        fontWeight: '800',
     },
 });
 

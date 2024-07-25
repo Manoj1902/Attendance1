@@ -80,19 +80,26 @@ const StaffLogin = ({ navigation }) => {
                         </View>
 
                         <View style={styles.card}>
-                            <Text style={styles.cardTitle}>Login</Text>
+                            <Text style={styles.cardTitle}>Login with mobile number</Text>
 
                             <View style={styles.input}>
                                 <View>
                                     <Text style={styles.inputTitle}>Mobile</Text>
                                     <View style={styles.inputContainer}>
-                                        <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
-                                        <TextInput keyboardType='number-pad' style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Mobile' value={mobile} onChangeText={setMobile} />
+                                        <Icon name='phone-portrait' padding={8} size={20} color={theme.blackText} />
+                                        <TextInput keyboardType='number-pad'
+                                            style={{
+                                                width: width * 0.65,
+                                                color: theme.blackText,
+                                                textAlign: 'center',
+                                                // backgroundColor: 'red'
+                                            }}
+                                            placeholderTextColor={"#808080"} placeholder='Mobile' value={mobile} onChangeText={setMobile} />
                                     </View>
                                 </View>
 
 
-                                <View>
+                                {/* <View>
 
                                     <Text style={styles.inputTitle}>Password</Text>
                                     <View style={styles.inputContainer}>
@@ -106,7 +113,7 @@ const StaffLogin = ({ navigation }) => {
                                         </TouchableOpacity>
                                     </View>
 
-                                </View>
+                                </View> */}
 
                                 <TouchableOpacity style={{
                                     backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor,
@@ -225,7 +232,8 @@ const styles = StyleSheet.create({
     inputTitle: {
         paddingHorizontal: 8,
         marginBottom: 4,
-        color: theme.blackText
+        color: theme.blackText,
+
     },
     inputContainer: {
         flexDirection: 'row',

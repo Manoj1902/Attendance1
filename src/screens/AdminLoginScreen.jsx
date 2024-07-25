@@ -1,44 +1,39 @@
-import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { theme } from '../theme'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/Ionicons'
-import { version } from '../../package.json'
-import { Pressable } from 'react-native'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../config/firebase'
+import {
+    Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid,
+    TouchableOpacity, View, Pressable
+} from 'react-native';
+import React, { useState } from 'react';
+import { theme } from '../theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { version } from '../../package.json';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
-
-var { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
 
 const AdminLoginScreen = ({ navigation }) => {
-    // Admin User Password
-    const Admin = "Manoj"
-    const Password = "Manoj@123"
-
-    const [hidePassword, setHidePassword] = useState(true)
-    const [adminEmail, setadminEmail] = useState("")
-    const [adminPassword, setAdminPassword] = useState("")
-
-    const [disableLoginBtn, setDisableLoginBtn] = useState(false)
+    const [hidePassword, setHidePassword] = useState(true);
+    const [adminEmail, setAdminEmail] = useState("");
+    const [adminPassword, setAdminPassword] = useState("");
+    const [disableLoginBtn, setDisableLoginBtn] = useState(false);
 
     const handleSubmit = async () => {
-        setDisableLoginBtn(true)
+        setDisableLoginBtn(true);
         if (adminEmail && adminPassword) {
             try {
-                await signInWithEmailAndPassword(auth, adminEmail, adminPassword)
-                setDisableLoginBtn(true)
+                await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+                setDisableLoginBtn(true);
             } catch (error) {
-                Alert.alert('Error', "Error while Login: ", error)
-                setDisableLoginBtn(false)
+                Alert.alert('Error', "Error while Login: ", error);
+                setDisableLoginBtn(false);
             }
         } else {
-            Alert.alert('please enter fields')
-            setDisableLoginBtn(false)
+            Alert.alert('Please enter fields');
+            setDisableLoginBtn(false);
         }
-        setDisableLoginBtn(false)
-    }
-
+        setDisableLoginBtn(false);
+    };
 
     const appVersion = () => {
         ToastAndroid.showWithGravity(
@@ -49,132 +44,97 @@ const AdminLoginScreen = ({ navigation }) => {
     };
 
     const checkUserPassword = () => {
-        if ((adminEmail == Admin) && (adminPassword == Password)) {
-            navigation.pop()
-            navigation.navigate('AdminDashboard')
-            setadminEmail("")
-            setAdminPassword("")
+        if (adminEmail === 'Admin' && adminPassword === 'Password') {
+            navigation.pop();
+            navigation.navigate('AdminDashboard');
+            setAdminEmail("");
+            setAdminPassword("");
         }
-    }
+    };
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <SafeAreaView >
-
-
-                {/* Header */}
+            <SafeAreaView>
                 <View style={styles.header}>
-
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
-
                     <Text style={styles.headerText}>Admin Login</Text>
-
-                    <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
+                    <TouchableOpacity style={styles.iconButton} onPress={appVersion}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
-
                 </View>
             </SafeAreaView>
-
             <View style={styles.loginImage}>
-                <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }}
-                    style={{
-                        height: 185,
-                        width: 185,
-                        justifyContent: 'center'
-                    }} />
+                <Image
+                    source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }}
+                    style={styles.loginImageStyle}
+                />
             </View>
-
             <View style={styles.card}>
                 <Text style={styles.cardTitle}>Login</Text>
-
                 <View style={styles.input}>
                     <View>
-
                         <Text style={styles.inputTitle}>Email</Text>
                         <View style={styles.inputContainer}>
-                            <Icon name='person-sharp' padding={8} size={20} color={theme.blackText} />
-                            <TextInput keyboardType='email-address' style={{ width: width, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Email' value={adminEmail} onChangeText={value => setadminEmail(value)} />
+                            <Icon name='person-sharp' size={20} color={theme.blackText} style={styles.iconStyle} />
+                            <TextInput
+                                keyboardType='email-address'
+                                style={styles.textInput}
+                                placeholderTextColor={"#808080"}
+                                placeholder='Email'
+                                value={adminEmail}
+                                onChangeText={setAdminEmail}
+                            />
                         </View>
                     </View>
                     <View>
-
                         <Text style={styles.inputTitle}>Password</Text>
                         <View style={styles.inputContainer}>
-                            <Icon name='lock-closed' padding={8} size={20} color={theme.blackText} />
-                            <TextInput style={{ width: width * 0.62, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Password' secureTextEntry={hidePassword} value={adminPassword} onChangeText={value => setAdminPassword(value)} />
+                            <Icon name='lock-closed' size={20} color={theme.blackText} style={styles.iconStyle} />
+                            <TextInput
+                                style={styles.passwordInput}
+                                placeholderTextColor={"#808080"}
+                                placeholder='Password'
+                                secureTextEntry={hidePassword}
+                                value={adminPassword}
+                                onChangeText={setAdminPassword}
+                            />
                             <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-                                {
-                                    hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.blackText} />
-                                        :
-                                        <Icon name='eye-outline' padding={8} size={20} color={theme.blackText} />}
+                                <Icon
+                                    name={hidePassword ? 'eye' : 'eye-outline'}
+                                    size={20}
+                                    color={theme.blackText}
+                                    style={styles.iconStyle}
+                                />
                             </TouchableOpacity>
                         </View>
-                        {/* <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
-                            <Text style={{ color: theme.themeColor, textAlign: 'right', marginTop: 6, fontWeight: '600' }}>Forgot Password?</Text>
-                        </Pressable> */}
                     </View>
-                    <TouchableOpacity style={{
-                        backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor,
-                        width: 150,
-                        paddingHorizontal: 22,
-                        paddingVertical: 12,
-                        alignSelf: 'center',
-                        elevation: 3,
-                        borderRadius: 10
-                    }} onPress={handleSubmit} disabled={disableLoginBtn}>
+                    <TouchableOpacity
+                        style={[styles.loginBtn, { backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor }]}
+                        onPress={handleSubmit}
+                        disabled={disableLoginBtn}
+                    >
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
-
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
+                    <View style={styles.footerContainer}>
                         <Text style={{ color: theme.blackText }}>Click here for </Text>
-                        <TouchableOpacity style={{}} onPress={() => navigation.navigate('Staff')} disabled={disableLoginBtn}>
-                            <Text style={{
-                                color: theme.themeColor,
-                                fontWeight: '800',
-                                fontSize: 16
-                            }}>
-                                Staff Login !
-                            </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Staff')} disabled={disableLoginBtn}>
+                            <Text style={styles.staffLoginText}>Staff Login !</Text>
                         </TouchableOpacity>
                     </View>
-
-
-                    {/* <View style={{
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingVertical: 4
-                    }}>
-                        <Text style={{
-                            color: theme.blackText,
-                            fontSize: 16
-                        }}>
-                            Don't Have Account?
-                        </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('AdminSignUp')} >
-                            <Text style={{ color: theme.themeColor, fontWeight: 'bold', fontSize: 18 }}> Sign Up.</Text>
-                        </TouchableOpacity>
-                    </View> */}
                 </View>
             </View>
-
         </ScrollView>
-    )
-}
+    );
+};
 
-export default AdminLoginScreen
+export default AdminLoginScreen;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: theme.background
+        backgroundColor: theme.background,
     },
     header: {
         width: width,
@@ -182,7 +142,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 16,
-        paddingHorizontal: 12
+        paddingHorizontal: 12,
     },
     iconBackButton: {
         backgroundColor: theme.themeColor,
@@ -192,14 +152,24 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: theme.text
+        color: theme.text,
+    },
+    iconButton: {
+        backgroundColor: theme.themeColor,
+        padding: 4,
+        borderRadius: 10,
     },
     loginImage: {
         width: width,
         height: height * 0.25,
         padding: 50,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    loginImageStyle: {
+        height: 185,
+        width: 185,
+        justifyContent: 'center',
     },
     card: {
         flex: 1,
@@ -215,44 +185,77 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.18,
         shadowRadius: 4.59,
         elevation: 5,
-        padding: 20
+        padding: 20,
     },
     cardTitle: {
         color: theme.blackText,
         textAlign: 'center',
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     input: {
-        // backgroundColor: 'red',
         marginTop: 28,
         padding: 8,
-        gap: 30
+        gap: 30,
     },
     inputTitle: {
         paddingHorizontal: 8,
         marginBottom: 4,
-        color: theme.blackText
+        color: theme.blackText,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        // justifyContent: '',
-        // backgroundColor: 'blue',
         gap: 10,
         borderRadius: 10,
         borderWidth: 1.5,
-        borderColor: '#5e5e5e'
+        borderColor: '#5e5e5e',
+    },
+    iconStyle: {
+        padding: 8,
+        borderRadius: 8,
+    },
+    textInput: {
+        width: width,
+        color: theme.blackText,
+        borderRadius: 8,
+    },
+    passwordInput: {
+        width: width * 0.62,
+        color: theme.blackText,
+        borderRadius: 8,
     },
     loginBtn: {
-
-
+        width: 150,
+        backgroundColor: theme.themeColor,
+        paddingVertical: 12,
+        alignSelf: 'center',
+        borderRadius: 10,
+        marginTop: 30,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 6,
     },
     loginBtnText: {
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.text,
-
-    }
-})
+        color: 'white',
+        paddingHorizontal: 30,
+    },
+    footerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    staffLoginText: {
+        color: theme.themeColor,
+        fontWeight: '800',
+        fontSize: 16,
+    },
+});
