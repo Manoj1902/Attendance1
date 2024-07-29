@@ -106,12 +106,13 @@ const InsertEmployeeScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <SafeAreaView>
+                {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Add New Employee</Text>
-                    <TouchableOpacity style={styles.iconButton} onPress={appVersion}>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
                 </View>
@@ -184,8 +185,13 @@ const InsertEmployeeScreen = ({ navigation }) => {
                                 value={password}
                                 onChangeText={setPassword}
                             />
-                            <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-                                <Icon name={hidePassword ? 'eye' : 'eye-outline'} size={20} color={theme.text} />
+                            <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}
+                                style={{
+                                    padding: 8,
+                                    borderRadius: 8,
+                                }}>
+                                <Icon name={hidePassword ? 'eye' : 'eye-outline'} size={20} color={theme.text}
+                                    style={styles.iconStyle} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -227,30 +233,39 @@ const styles = StyleSheet.create({
     },
     header: {
         width: width,
+        // height: height * 0.07,
+        backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 16,
-        paddingHorizontal: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
     },
     iconBackButton: {
-        backgroundColor: theme.themeColor,
         padding: 4,
         borderRadius: 10,
     },
     headerText: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: theme.text,
+        color: 'white',
     },
     iconButton: {
-        backgroundColor: theme.themeColor,
-        padding: 4,
-        borderRadius: 10,
+        padding: 10,
     },
     input: {
-        marginTop: 28,
-        padding: 8,
+        marginTop: 20,
+        paddingHorizontal: 20,
         gap: 30,
     },
     inputTitle: {
@@ -276,6 +291,7 @@ const styles = StyleSheet.create({
         width: width * 0.75,
         color: theme.text,
         borderRadius: 8,
+
     },
     iconStyle: {
         padding: 8,
@@ -301,9 +317,10 @@ const styles = StyleSheet.create({
         borderColor: '#5e5e5e',
     },
     imagePreview: {
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
         marginTop: 10,
+        borderRadius: 20
     },
     insertBtn: {
         padding: 10,
@@ -313,6 +330,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         borderRadius: 10,
+        marginBottom: 20,
     },
     insertBtnText: {
         fontSize: 18,

@@ -1,4 +1,4 @@
-import { Dimensions, PermissionsAndroid, SafeAreaView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, PermissionsAndroid, SafeAreaView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { theme } from '../theme'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -37,7 +37,7 @@ const HomeScreen = ({ navigation }) => {
                 )
             }
         } catch (err) {
-            console.warn(err);
+            Alert.alert("Error", err);
         }
     };
 
@@ -126,5 +126,6 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 24,
         color: theme.text,
+        fontWeight: 'bold'
     }
 })

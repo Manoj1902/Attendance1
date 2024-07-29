@@ -55,12 +55,13 @@ const AdminLoginScreen = ({ navigation }) => {
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <SafeAreaView>
+                {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Admin Login</Text>
-                    <TouchableOpacity style={styles.iconButton} onPress={appVersion}>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
                 </View>
@@ -138,42 +139,49 @@ const styles = StyleSheet.create({
     },
     header: {
         width: width,
+        backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 16,
-        paddingHorizontal: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
     },
     iconBackButton: {
-        backgroundColor: theme.themeColor,
         padding: 4,
         borderRadius: 10,
     },
     headerText: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: theme.text,
+        color: 'white',
     },
     iconButton: {
-        backgroundColor: theme.themeColor,
-        padding: 4,
-        borderRadius: 10,
+        padding: 10,
     },
     loginImage: {
         width: width,
         height: height * 0.25,
-        padding: 50,
         justifyContent: 'center',
         alignItems: 'center',
     },
     loginImageStyle: {
         height: 185,
         width: 185,
-        justifyContent: 'center',
+        marginTop: 34
     },
     card: {
         flex: 1,
-        height: height * 0.68,
+        height: height * 0.67,
         backgroundColor: 'white',
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,

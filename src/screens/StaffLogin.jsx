@@ -56,17 +56,13 @@ const StaffLogin = ({ navigation }) => {
                         <SafeAreaView>
                             {/* Header */}
                             <View style={styles.header}>
-
                                 <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                                     <Icon name="chevron-back" size={34} color="white" />
                                 </TouchableOpacity>
-
                                 <Text style={styles.headerText}>Staff Login</Text>
-
                                 <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
                                     <Icon name="information-circle" size={35} color="white" />
                                 </TouchableOpacity>
-
                             </View>
                         </SafeAreaView>
 
@@ -75,7 +71,8 @@ const StaffLogin = ({ navigation }) => {
                                 style={{
                                     height: 165,
                                     width: 280,
-                                    justifyContent: 'center'
+                                    justifyContent: 'center',
+                                    marginTop: 50
                                 }} />
                         </View>
 
@@ -167,32 +164,34 @@ const styles = StyleSheet.create({
     },
     header: {
         width: width,
+        backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 16,
-        paddingHorizontal: 12
-    },
-    loginContainer: {
-        justifyContent: 'center',
-    },
-    inputText: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-        color: theme.blackText
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
     },
     iconBackButton: {
-        backgroundColor: theme.themeColor,
         padding: 4,
         borderRadius: 10,
     },
     headerText: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: theme.text
+        color: 'white',
+    },
+    iconButton: {
+        padding: 10,
     },
     loginImage: {
         width: width,
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
     },
     card: {
         flex: 1,
-        height: height * 0.68,
+        height: height * 0.67,
         backgroundColor: 'white',
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,

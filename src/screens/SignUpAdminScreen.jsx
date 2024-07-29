@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 20,
+        paddingVertical: 8,
         paddingHorizontal: 16,
         shadowColor: "#000000",
         shadowOffset: {
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
     card: {
         flex: 1,
         backgroundColor: 'white',
+        height: height * 0.68,
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,
         shadowColor: "#000",

@@ -8,7 +8,7 @@ import { theme } from '../theme';
 
 const { width, height } = Dimensions.get('window');
 
-const StaffDashboard = ({ employee }) => {
+const StaffDashboard = ({ employee, navigation }) => {
     const { Name: employeeName, Mobile: employeeMobile } = employee;
     const [imageUri, setImageUri] = useState(null);
     const [location, setLocation] = useState(null);

@@ -1,8 +1,9 @@
-import { Alert, Button, Dimensions, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, FlatList, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 var { width, height } = Dimensions.get('window');
 
@@ -119,63 +120,82 @@ const FetchAllEmployeeScreen = () => {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.searchBar}
-                placeholder="Search by name"
-                value={searchQuery}
-                onChangeText={handleSearch}
-            />
-            {loading ? (
-                <Text>Loading...</Text>
-            ) : (
-                <FlatList
-                    data={filteredData}
-                    keyExtractor={(item) => item.Id.toString()}
-                    renderItem={renderItem}
-                />
-            )}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(!modalVisible)}
-            >
-                <View style={styles.modalView}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Name"
-                        value={name}
-                        onChangeText={setName}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Mobile"
-                        value={mobile}
-                        onChangeText={setMobile}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry={false}
-                    />
-                    <View style={styles.modalButtonContainer}>
-                        <TouchableOpacity
-                            onPress={updateItem}
-                            style={styles.modalButton}
-                        >
-                            <Text style={styles.buttonText}>Update</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => setModalVisible(false)}
-                            style={styles.modalButton}
-                        >
-                            <Text style={styles.buttonText}>Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
+            <SafeAreaView>
+                {/* Header */}
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
+                        <Icon name="chevron-back" size={34} color="white" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerText}>All Employees</Text>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
+                        <Icon name="information-circle" size={35} color="white" />
+                    </TouchableOpacity>
                 </View>
-            </Modal>
+            </SafeAreaView>
+            <View style={{ padding: 20 }}>
+                <TextInput
+                    style={styles.searchBar}
+                    placeholder="Search by name"
+                    value={searchQuery}
+                    onChangeText={handleSearch}
+                />
+
+
+                {loading ? (
+                    <Text>Loading...</Text>
+                ) : (
+                    <>
+                        <FlatList
+                            data={filteredData}
+                            keyExtractor={(item) => item.Id.toString()}
+                            renderItem={renderItem}
+                        />
+                    </>
+                )}
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(!modalVisible)}
+                >
+                    <View style={styles.modalView}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Name"
+                            value={name}
+                            onChangeText={setName}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Mobile"
+                            value={mobile}
+                            onChangeText={setMobile}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Password"
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry={false}
+                        />
+                        <View style={styles.modalButtonContainer}>
+                            <TouchableOpacity
+                                onPress={updateItem}
+                                style={styles.modalButton}
+                            >
+                                <Text style={styles.buttonText}>Update</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setModalVisible(false)}
+                                style={styles.modalButton}
+                            >
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
         </View>
     );
 };
@@ -183,8 +203,39 @@ const FetchAllEmployeeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: theme.background,
+    },
+    header: {
+        width: width,
+        // height: height * 0.07,
+        backgroundColor: theme.themeColor,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+    iconBackButton: {
+        padding: 4,
+        borderRadius: 10,
+    },
+    headerText: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    iconButton: {
+        padding: 10,
     },
     item: {
         padding: 8,
