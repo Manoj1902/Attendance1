@@ -63,13 +63,20 @@ const HomeScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Admin')}>
-                    <Text style={styles.buttonText}>Admin Login</Text>
-                </TouchableOpacity>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Staff')}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Admin')}>
+                        <Icon name={'shield'} size={40} color={'white'} style={{ textAlign: 'center' }} />
+                    </TouchableOpacity>
+                    <Text style={styles.buttonText}>Admin Login</Text>
+                </View>
+
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Staff')}>
+                        <Icon name={'people-sharp'} size={40} color={'white'} style={{ textAlign: 'center' }} />
+                    </TouchableOpacity>
                     <Text style={styles.buttonText}>Staff Login</Text>
-                </TouchableOpacity>
+                </View>
             </View>
 
         </SafeAreaView>
@@ -114,18 +121,23 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 50
+        gap: 50,
     },
     button: {
+        width: 100,
+        height: 100,
         backgroundColor: theme.themeColor,
         paddingHorizontal: 30,
         paddingVertical: 15,
         borderRadius: 9999,
-        elevation: 3
+        elevation: 3,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     buttonText: {
         fontSize: 24,
         color: theme.text,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center',
     }
 })

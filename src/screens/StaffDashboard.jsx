@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Dimensions, Per
 import { RNCamera } from 'react-native-camera';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 
 const { width, height } = Dimensions.get('window');
 
-const StaffDashboard = ({ employee, navigation }) => {
+const StaffDashboard = ({ employee }) => {
+    const navigation = useNavigation();
     const { Name: employeeName, Mobile: employeeMobile } = employee;
     const [imageUri, setImageUri] = useState(null);
     const [location, setLocation] = useState(null);
@@ -97,10 +98,11 @@ const StaffDashboard = ({ employee, navigation }) => {
         }
 
         const formData = new FormData();
+        const uniqueName = `${employeeName}_photo_${Date.now()}.jpg`; // Use timestamp to create unique image name
         formData.append('image', {
             uri: imageUri,
             type: 'image/jpeg',
-            name: 'photo.jpg',
+            name: uniqueName,
         });
         formData.append('name', employeeName);
         formData.append('mobile', employeeMobile);
@@ -116,7 +118,7 @@ const StaffDashboard = ({ employee, navigation }) => {
                 },
             });
             Alert.alert('Success', response.data.message);
-            openCameraScreen();
+            navigation.goBack(); // Navigate to the login screen
         } catch (error) {
             console.error('Error uploading image:', error);
             Alert.alert('Error', 'Failed to upload image. Please try again.');
@@ -139,12 +141,37 @@ const StaffDashboard = ({ employee, navigation }) => {
                         source={{ uri: imageUri }}
                         style={styles.image}
                     />
-                    <View style={{ alignItems: 'center' }}>
-                        <Text>Name: {employeeName}</Text>
-                        <Text>Mobile: {employeeMobile}</Text>
-                        <Text>Date: {date}</Text>
-                        <Text>Time: {time}</Text>
-                        <Text>Location: {location}</Text>
+                    <View
+                        style={{
+                            padding: 10,
+                            marginVertical: 10
+                        }}>
+                        <Text style={{
+                            fontSize: 28,
+                            fontWeight: 'bold'
+                        }}>{employeeName}</Text>
+                    </View>
+
+                    <View style={{
+                        backgroundColor: '#3F4056',
+                        padding: 20,
+                        borderRadius: 12,
+                        marginVertical: 10,
+                        width: width * 0.75
+                    }}>
+                        <View style={{
+                            backgroundColor: '#4F5068',
+                            borderRadius: 8,
+                            paddingHorizontal: 15,
+                            paddingVertical: 12,
+                            gap: 5,
+
+                        }}>
+                            <Text style={{ fontSize: 16 }}>Mobile: {employeeMobile}</Text>
+                            <Text style={{ fontSize: 16 }}>Date: {date}</Text>
+                            <Text style={{ fontSize: 16 }}>Time: {time}</Text>
+                            <Text style={{ fontSize: 16 }}>Location: {location}</Text>
+                        </View>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         {showButtons ? (
@@ -157,7 +184,7 @@ const StaffDashboard = ({ employee, navigation }) => {
                                 </TouchableOpacity>
                             </>
                         ) : (
-                            <Text style={styles.countdownText}>{countdown}</Text>
+                            <Text style={styles.countdownText}>Please wait {countdown} sec.</Text>
                         )}
                     </View>
                 </View>
@@ -204,16 +231,21 @@ const styles = StyleSheet.create({
     },
     button: {
         width: 150,
-        height: 40,
-        backgroundColor: '#007BFF',
-        borderRadius: 5,
+        // height: 40,
+        backgroundColor: theme.themeColor,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
         margin: 10,
+        paddingVertical: 18,
+        paddingHorizontal: 24
     },
     buttonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center'
+
     },
     captureButton: {
         width: 80,

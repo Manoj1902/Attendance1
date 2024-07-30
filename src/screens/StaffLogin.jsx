@@ -49,7 +49,9 @@ const StaffLogin = ({ navigation }) => {
         < >
             {
                 employee ? (
-                    <StaffDashboard employee={employee} />
+                    <>
+                        <StaffDashboard employee={employee} />
+                    </>
                 ) : (
                     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
