@@ -18,6 +18,7 @@ const StaffDashboard = ({ employee }) => {
     const [cameraRef, setCameraRef] = useState(null);
     const [showButtons, setShowButtons] = useState(true);
     const [countdown, setCountdown] = useState(10);
+    const [disableUploadBtn, setDisableUploadBtn] = useState(false);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -92,8 +93,10 @@ const StaffDashboard = ({ employee }) => {
     };
 
     const uploadImage = async () => {
+        setDisableUploadBtn(true)
         if (!imageUri || !location) {
             Alert.alert('Error', 'Please capture an image and get location first.');
+            setDisableUploadBtn(false)
             return;
         }
 
@@ -118,10 +121,12 @@ const StaffDashboard = ({ employee }) => {
                 },
             });
             Alert.alert('Success', response.data.message);
+            setDisableUploadBtn(false)
             navigation.goBack(); // Navigate to the login screen
         } catch (error) {
-            console.error('Error uploading image:', error);
+            // console.error('Error uploading image:', error);
             Alert.alert('Error', 'Failed to upload image. Please try again.');
+            setDisableUploadBtn(false)
         }
     };
 
@@ -176,7 +181,7 @@ const StaffDashboard = ({ employee }) => {
                     <View style={{ flexDirection: 'row' }}>
                         {showButtons ? (
                             <>
-                                <TouchableOpacity onPress={uploadImage} style={styles.button}>
+                                <TouchableOpacity onPress={uploadImage} style={[styles.button, { backgroundColor: disableUploadBtn ? '#858585' : theme.themeColor }]}>
                                     <Text style={styles.buttonText}>Upload Image</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={openCameraScreen} style={styles.button}>
@@ -197,7 +202,6 @@ const StaffDashboard = ({ employee }) => {
                         captureAudio={false}
                     >
                         <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
-                            {/* <Text style={styles.buttonText}>Capture</Text> */}
                         </TouchableOpacity>
                     </RNCamera>
                 </View>

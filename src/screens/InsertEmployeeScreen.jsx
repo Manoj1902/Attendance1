@@ -27,152 +27,111 @@ const InsertEmployeeScreen = ({ navigation }) => {
         );
     };
 
+    const handleImageResponse = (response) => {
+        if (response.didCancel) return;
+        if (response.error) {
+            Alert.alert('Error', `Error: ${response.error}`);
+            return;
+        }
+        const source = response.assets[0].base64;
+        const imageUri = `data:image/jpeg;base64,${source}`;
+        setImageURI(imageUri);
+    };
+
     const selectImage = () => {
-        launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (response) => {
-            if (response.didCancel) {
-                // User cancelled image picker
-            } else if (response.error) {
-                Alert.alert('Error', `ImagePicker Error: ${response.error}`);
-            } else {
-                const source = response.assets[0].base64;
-                setImageURI(`data:image/jpeg;base64,${source}`);
-            }
-        });
+        launchImageLibrary({ mediaType: 'photo', includeBase64: true }, handleImageResponse);
     };
 
     const takePhoto = () => {
-        launchCamera({ mediaType: 'photo', includeBase64: true }, (response) => {
-            if (response.didCancel) {
-                // User cancelled camera
-            } else if (response.error) {
-                Alert.alert('Error', `Camera Error: ${response.error}`);
-            } else {
-                const source = response.assets[0].base64;
-                setImageURI(`data:image/jpeg;base64,${source}`);
-            }
-        });
+        launchCamera(
+            { mediaType: 'photo', includeBase64: true, maxHeight: 1080, maxWidth: 1080 },
+            handleImageResponse
+        );
     };
 
     const handleInsert = () => {
-        const uName = `${name} (${department})`;
-        const uMobile = mobile;
-        const uSalary = salary;
-        const uPassword = password;
-
-        if (!uName || !uMobile || !uSalary || !uPassword || !imageURI) {
+        if (!name || !mobile || !salary || !password || !imageURI) {
             Alert.alert("Required Field is Missing");
-        } else {
-            const InsertURL = 'http://attendance.mobitechllp.com/insert.php';
-
-            const headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            };
-
-            const Data = {
-                Name: uName,
-                Mobile: uMobile,
-                Salary: uSalary,
-                Password: uPassword,
-                Image: imageURI
-            };
-
-            fetch(InsertURL, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(Data)
-            })
-                .then((response) => response.text())
-                .then((responseText) => {
-                    try {
-                        const responseJson = JSON.parse(responseText);
-                        Alert.alert(responseJson[0].Message);
-                    } catch (e) {
-                        Alert.alert(`Error parsing response: ${e.message}`);
-                    }
-                })
-                .catch((error) => {
-                    Alert.alert(`Error: ${error}`);
-                });
-
-            setName('');
-            setMobile('');
-            setSalary('');
-            setPassword('');
-            setImageURI(null);
+            return;
         }
+
+        const InsertURL = 'http://attendance.mobitechllp.com/insert.php';
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        const Data = {
+            Name: `${name} (${department})`,
+            Mobile: mobile,
+            Salary: salary,
+            Password: password,
+            Image: imageURI
+        };
+
+        fetch(InsertURL, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(Data)
+        })
+            .then((response) => response.text())
+            .then((responseText) => {
+                try {
+                    const responseJson = JSON.parse(responseText);
+                    Alert.alert(responseJson[0].Message);
+                } catch (e) {
+                    Alert.alert(`Error parsing response: ${e.message}`);
+                }
+            })
+            .catch((error) => {
+                Alert.alert(`Error: ${error}`);
+            });
+
+        // Clear state
+        setName('');
+        setDepartment('');
+        setMobile('');
+        setSalary('');
+        setPassword('');
+        setImageURI(null);
     };
 
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Add New Employee</Text>
-                    <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
+                    <TouchableOpacity style={styles.iconButton} onPress={appVersion}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
             <ScrollView>
                 <View style={styles.input}>
-                    <View>
-                        <Text style={styles.inputTitle}>Name</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='person-sharp' size={20} color={theme.text} style={styles.iconStyle} />
-                            <TextInput
-                                style={styles.textInput}
-                                placeholderTextColor="#b0b0b0"
-                                placeholder='Name'
-                                value={name}
-                                onChangeText={setName}
-                            />
+                    {['Name', 'Department', 'Mobile', 'Salary'].map((field, index) => (
+                        <View key={index}>
+                            <Text style={styles.inputTitle}>{field}</Text>
+                            <View style={styles.inputContainer}>
+                                <Icon name={['person-sharp', 'podium', 'phone-portrait', 'wallet'][index]} size={20} color={theme.text} style={styles.iconStyle} />
+                                <TextInput
+                                    style={styles.textInput}
+                                    placeholderTextColor="#b0b0b0"
+                                    placeholder={field}
+                                    value={{ Name: name, Department: department, Mobile: mobile, Salary: salary }[field]}
+                                    onChangeText={(text) => {
+                                        if (field === 'Name') setName(text);
+                                        if (field === 'Department') setDepartment(text);
+                                        if (field === 'Mobile') setMobile(text);
+                                        if (field === 'Salary') setSalary(text);
+                                    }}
+                                    keyboardType={field === 'Mobile' || field === 'Salary' ? 'number-pad' : 'default'}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View>
-                        <Text style={styles.inputTitle}>Department</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='podium' size={20} color={theme.text} style={styles.iconStyle} />
-                            <TextInput
-                                style={styles.textInput}
-                                placeholderTextColor="#b0b0b0"
-                                placeholder='Department'
-                                value={department}
-                                onChangeText={setDepartment}
-                            />
-                        </View>
-                    </View>
-                    <View>
-                        <Text style={styles.inputTitle}>Mobile</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='phone-portrait' size={20} color={theme.text} style={styles.iconStyle} />
-                            <TextInput
-                                keyboardType='number-pad'
-                                style={styles.textInput}
-                                placeholderTextColor="#b0b0b0"
-                                placeholder='Mobile'
-                                value={mobile}
-                                onChangeText={setMobile}
-                            />
-                        </View>
-                    </View>
-                    <View>
-                        <Text style={styles.inputTitle}>Salary</Text>
-                        <View style={styles.inputContainer}>
-                            <Icon name='wallet' size={20} color={theme.text} style={styles.iconStyle} />
-                            <TextInput
-                                keyboardType='number-pad'
-                                style={styles.textInput}
-                                placeholderTextColor="#b0b0b0"
-                                placeholder='Salary'
-                                value={salary}
-                                onChangeText={setSalary}
-                            />
-                        </View>
-                    </View>
+                    ))}
                     <View>
                         <Text style={styles.inputTitle}>Password</Text>
                         <View style={styles.inputContainer}>
@@ -186,34 +145,24 @@ const InsertEmployeeScreen = ({ navigation }) => {
                                 onChangeText={setPassword}
                             />
                             <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}
-                                style={{
-                                    padding: 8,
-                                    borderRadius: 8,
-                                }}>
-                                <Icon name={hidePassword ? 'eye' : 'eye-outline'} size={20} color={theme.text}
-                                    style={styles.iconStyle} />
+                                style={styles.eyeIconButton}>
+                                <Icon name={hidePassword ? 'eye' : 'eye-outline'} size={20} color={theme.text} />
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.uploadContainer}>
                         <Text style={styles.inputTitle}>Upload Image</Text>
                         <View style={styles.uploadButtons}>
-                            <TouchableOpacity
-                                onPress={selectImage}
-                                style={styles.uploadButton}>
+                            <TouchableOpacity onPress={selectImage} style={styles.uploadButton}>
                                 <Icon name='images' size={30} color={theme.text} />
                                 <Text>{imageURI ? 'Image Selected' : 'Select Image'}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={takePhoto}
-                                style={styles.uploadButton}>
+                            <TouchableOpacity onPress={takePhoto} style={styles.uploadButton}>
                                 <Icon name='camera' size={30} color={theme.text} />
                                 <Text>{imageURI ? 'Image Clicked' : 'Take Photo'}</Text>
                             </TouchableOpacity>
                         </View>
-                        {imageURI && (
-                            <Image source={{ uri: imageURI }} style={styles.imagePreview} />
-                        )}
+                        {imageURI && <Image source={{ uri: imageURI }} style={styles.imagePreview} />}
                     </View>
                     <TouchableOpacity style={styles.insertBtn} onPress={handleInsert}>
                         <Text style={styles.insertBtnText}>Insert</Text>
@@ -233,7 +182,6 @@ const styles = StyleSheet.create({
     },
     header: {
         width: width,
-        // height: height * 0.07,
         backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -241,10 +189,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 16,
         shadowColor: "#000000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         elevation: 3,
@@ -291,9 +236,12 @@ const styles = StyleSheet.create({
         width: width * 0.75,
         color: theme.text,
         borderRadius: 8,
-
     },
     iconStyle: {
+        padding: 8,
+        borderRadius: 8,
+    },
+    eyeIconButton: {
         padding: 8,
         borderRadius: 8,
     },

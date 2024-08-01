@@ -6,7 +6,7 @@ import { auth } from '../config/firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { version } from '../../package.json';
 
-var { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const AdminDashboard = ({ navigation }) => {
     const [logoutBtnDisabled, setLogoutBtnDisabled] = useState(false);
@@ -29,87 +29,50 @@ const AdminDashboard = ({ navigation }) => {
     };
 
     return (
-        <>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Admin Dashboard</Text>
+                <TouchableOpacity style={styles.iconButton} onPress={handleLogout} disabled={logoutBtnDisabled}>
+                    <Icon name="log-out" size={30} color="white" />
+                </TouchableOpacity>
+            </View>
 
-            <View style={styles.container}>
-                <SafeAreaView>
-                    {/* Header */}
-                    <View style={styles.header}>
-                        <Text style={styles.headerText}>Admin Dashboard</Text>
-                        <TouchableOpacity style={styles.iconButton} onPress={handleLogout} disabled={logoutBtnDisabled}>
-                            <Icon name="log-out" size={30} color="white" style={styles.icon} />
-                        </TouchableOpacity>
-                    </View>
-                </SafeAreaView>
+            <View style={styles.loginImage}>
+                <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }} style={styles.image} />
+            </View>
 
-                <View style={styles.loginImage}>
-                    <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }}
-                        style={styles.image} />
+            <View style={styles.card}>
+                <View style={styles.userInfo}>
+                    <Text style={styles.userInfoText}>Welcome,<Text style={styles.boldText}> {adminName}</Text></Text>
+                    <Text style={styles.userInfoText}>Email: {adminEmail}</Text>
                 </View>
 
-
-                <View style={styles.card}>
-                    <View style={styles.userInfo}>
-                        <Text style={styles.userInfoText}>Welcome,
-                            <Text style={{ fontWeight: 'bold' }}> {adminName}</Text>
-                        </Text>
-                        <Text style={styles.userInfoText}>Email: {adminEmail}</Text>
-                    </View>
-                    <View style={styles.centered}>
-                        <View style={styles.buttonItem}>
-                            <TouchableOpacity style={styles.insertScreenBtn} onPress={() => navigation.navigate('InsertEmployee')}>
-                                <Icon name={'person-add-sharp'} size={35} color={'white'} style={{ textAlign: 'center' }} />
+                <View style={styles.buttonContainer}>
+                    {[
+                        { name: 'person-add-sharp', label: 'Add New Employee', route: 'InsertEmployee' },
+                        { name: 'people-sharp', label: 'Show All Employees', route: 'ShowAllEmployee' },
+                        { name: 'shield', label: 'Add New Admin', route: 'AdminSignUp' },
+                        { name: 'power', label: 'Logout', action: handleLogout }
+                    ].map(({ name, label, route, action }, index) => (
+                        <View key={index} style={styles.buttonItem}>
+                            <TouchableOpacity style={styles.insertScreenBtn} onPress={action || (() => navigation.navigate(route))}>
+                                <Icon name={name} size={40} color="white" />
                             </TouchableOpacity>
-                            <Text style={styles.buttonText}>Add New Employee</Text>
-                            <Icon name={'arrow-forward'} size={20} color={theme.themeColor} style={{ textAlign: 'center' }} />
+                            <Text style={styles.buttonText}>{label}</Text>
+                            <Icon name="arrow-forward" size={20} color={theme.themeColor} />
                         </View>
-
-                        <View style={styles.buttonItem}>
-
-                            <TouchableOpacity style={styles.insertScreenBtn} onPress={() => navigation.navigate('ShowAllEmployee')}>
-                                {/* <Text style={styles.insertScreenBtnText}>Show All Employee</Text> */}
-                                <Icon name={'people-sharp'} size={40} color={'white'} style={{ textAlign: 'center' }} />
-                            </TouchableOpacity>
-                            <Text style={styles.buttonText}>Show All Employees</Text>
-
-                            <Icon name={'arrow-forward'} size={20} color={theme.themeColor} style={{ textAlign: 'center' }} />
-                        </View>
-
-                        <View style={styles.buttonItem}>
-                            <TouchableOpacity style={styles.insertScreenBtn} onPress={() => navigation.navigate('AdminSignUp')}>
-                                {/* <Text style={styles.insertScreenBtnText}>Add New Admin</Text> */}
-                                <Icon name={'shield'} size={40} color={'white'} style={{ textAlign: 'center' }} />
-                            </TouchableOpacity>
-                            <Text style={styles.buttonText}>Add New Admin</Text>
-                            <Icon name={'arrow-forward'} size={20} color={theme.themeColor} style={{ textAlign: 'center' }} />
-
-                        </View>
-                        <View style={styles.buttonItem}>
-                            <TouchableOpacity style={styles.insertScreenBtn} onPress={handleLogout}>
-                                {/* <Text style={styles.insertScreenBtnText}>Add New Admin</Text> */}
-                                <Icon name={'power'} size={40} color={'white'} style={{ textAlign: 'center' }} />
-                            </TouchableOpacity>
-                            <Text style={styles.buttonText}>Logout</Text>
-
-                        </View>
-                    </View>
+                    ))}
                 </View>
-                <View style={styles.versionContainer}>
-                    <View style={{
-                        alignSelf: 'center',
-                        backgroundColor: '#d6d6d6',
-                        padding: 6,
-                        borderRadius: 6
-                    }}>
-                        <Text style={styles.versiontext}>Version: {version}</Text>
-                    </View>
+            </View>
+
+            <View style={styles.versionContainer}>
+                <View style={styles.versionBadge}>
+                    <Text style={styles.versionText}>Version: {version}</Text>
                 </View>
-            </View >
-        </>
+            </View>
+        </SafeAreaView>
     );
 };
-
-export default AdminDashboard;
 
 const styles = StyleSheet.create({
     container: {
@@ -117,12 +80,10 @@ const styles = StyleSheet.create({
         backgroundColor: theme.background,
     },
     header: {
-        width: width,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 10,
-        paddingHorizontal: 16,
+        padding: 10,
         backgroundColor: theme.themeColor,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
@@ -131,16 +92,12 @@ const styles = StyleSheet.create({
         fontSize: 26,
         fontWeight: 'bold',
         color: 'white',
-        paddingLeft: 12
     },
     iconButton: {
         padding: 10,
     },
-    icon: {
-        paddingHorizontal: 10,
-    },
     loginImage: {
-        width: width,
+        width,
         height: height * 0.25,
         justifyContent: 'center',
         alignItems: 'center',
@@ -159,37 +116,36 @@ const styles = StyleSheet.create({
         color: theme.blackText,
         marginBottom: 5,
     },
+    boldText: {
+        fontWeight: 'bold',
+    },
     card: {
         flex: 1,
         backgroundColor: 'white',
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
         elevation: 6,
         padding: 20,
         marginTop: -30,
     },
-    centered: {
+    buttonContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: 8,
-        flexWrap: 'wrap'
     },
     buttonItem: {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        // backgroundColor: 'red',
         borderRadius: 20,
         padding: 12,
-        gap: 10
+        gap: 10,
     },
     buttonText: {
         color: theme.blackText,
@@ -205,31 +161,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: theme.themeColor,
-        marginTop: 20,
-        marginHorizontal: 8,
+        margin: 8,
         borderRadius: 9999,
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
         elevation: 6,
     },
-    insertScreenBtnText: {
-        textAlign: 'center',
-        fontSize: 18,
-        color: 'white',
-        fontWeight: 'bold',
-    },
     versionContainer: {
         backgroundColor: 'white',
         alignItems: 'center',
-        padding: 10
+        padding: 10,
     },
-    versiontext: {
-        color: '#828282'
-    }
-
+    versionBadge: {
+        alignSelf: 'center',
+        backgroundColor: '#d6d6d6',
+        padding: 6,
+        borderRadius: 6,
+    },
+    versionText: {
+        color: '#828282',
+    },
 });
+
+export default AdminDashboard;

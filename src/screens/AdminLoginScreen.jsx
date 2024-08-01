@@ -1,6 +1,6 @@
 import {
     Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, ToastAndroid,
-    TouchableOpacity, View, Pressable
+    TouchableOpacity, View
 } from 'react-native';
 import React, { useState } from 'react';
 import { theme } from '../theme';
@@ -23,14 +23,11 @@ const AdminLoginScreen = ({ navigation }) => {
         if (adminEmail && adminPassword) {
             try {
                 await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-                setDisableLoginBtn(true);
             } catch (error) {
-                Alert.alert('Error', "Error while Login: ", error);
-                setDisableLoginBtn(false);
+                Alert.alert('Error', "Error while Login: ", error.message);
             }
         } else {
             Alert.alert('Please enter fields');
-            setDisableLoginBtn(false);
         }
         setDisableLoginBtn(false);
     };
@@ -55,13 +52,12 @@ const AdminLoginScreen = ({ navigation }) => {
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <SafeAreaView>
-                {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.headerText}>Admin Login</Text>
-                    <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
+                    <TouchableOpacity style={styles.iconButton} onPress={appVersion}>
                         <Icon name="information-circle" size={35} color="white" />
                     </TouchableOpacity>
                 </View>
@@ -82,7 +78,7 @@ const AdminLoginScreen = ({ navigation }) => {
                             <TextInput
                                 keyboardType='email-address'
                                 style={styles.textInput}
-                                placeholderTextColor={"#808080"}
+                                placeholderTextColor="#808080"
                                 placeholder='Email'
                                 value={adminEmail}
                                 onChangeText={setAdminEmail}
@@ -95,7 +91,7 @@ const AdminLoginScreen = ({ navigation }) => {
                             <Icon name='lock-closed' size={20} color={theme.blackText} style={styles.iconStyle} />
                             <TextInput
                                 style={styles.passwordInput}
-                                placeholderTextColor={"#808080"}
+                                placeholderTextColor="#808080"
                                 placeholder='Password'
                                 secureTextEntry={hidePassword}
                                 value={adminPassword}
@@ -126,11 +122,14 @@ const AdminLoginScreen = ({ navigation }) => {
                     </View>
                 </View>
             </View>
+            <View style={styles.versionContainer}>
+                <View style={styles.versionBox}>
+                    <Text style={styles.versionText}>Version: {version}</Text>
+                </View>
+            </View>
         </ScrollView>
     );
 };
-
-export default AdminLoginScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -138,18 +137,15 @@ const styles = StyleSheet.create({
         backgroundColor: theme.background,
     },
     header: {
-        width: width,
+        width,
         backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 8,
         paddingHorizontal: 16,
-        shadowColor: "#000000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         elevation: 3,
@@ -169,7 +165,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     loginImage: {
-        width: width,
+        width,
         height: height * 0.25,
         justifyContent: 'center',
         alignItems: 'center',
@@ -181,15 +177,12 @@ const styles = StyleSheet.create({
     },
     card: {
         flex: 1,
-        height: height * 0.67,
+        height: height * 0.62,
         backgroundColor: 'white',
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,
-        shadowColor: "#000000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.18,
         shadowRadius: 4.59,
         elevation: 5,
@@ -224,12 +217,12 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     textInput: {
-        width: width,
+        flex: 1,
         color: theme.blackText,
         borderRadius: 8,
     },
     passwordInput: {
-        width: width * 0.62,
+        flex: 1,
         color: theme.blackText,
         borderRadius: 8,
     },
@@ -241,10 +234,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 30,
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
         elevation: 6,
@@ -266,4 +256,20 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         fontSize: 16,
     },
+    versionContainer: {
+        backgroundColor: 'white',
+        alignItems: 'center',
+        padding: 10,
+    },
+    versionBox: {
+        alignSelf: 'center',
+        backgroundColor: '#d6d6d6',
+        padding: 6,
+        borderRadius: 6,
+    },
+    versionText: {
+        color: '#828282',
+    },
 });
+
+export default AdminLoginScreen;

@@ -1,11 +1,23 @@
-import { Alert, Dimensions, FlatList, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+    Alert,
+    Dimensions,
+    FlatList,
+    Image,
+    Modal,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-var { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const FetchAllEmployeeScreen = () => {
     const [data, setData] = useState([]);
@@ -22,23 +34,23 @@ const FetchAllEmployeeScreen = () => {
         fetchData();
     }, []);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const response = await axios.get('http://attendance.mobitechllp.com/fetch.php');
             setData(response.data);
-            setLoading(false);
         } catch (error) {
             Alert.alert('Error', error.message);
+        } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const deleteItem = async (id) => {
+    const deleteItem = useCallback(async (id) => {
         Alert.alert('Delete Employee!', 'Are you sure to delete the employee account from database', [
             {
                 text: 'Cancel',
                 onPress: () => { },
-                style: 'cancel',
+                style: 'cancel'
             },
             {
                 text: 'OK',
@@ -51,9 +63,9 @@ const FetchAllEmployeeScreen = () => {
                         Alert.alert('Error', 'Error deleting item. Please check network.');
                     }
                 }
-            },
+            }
         ]);
-    };
+    }, [fetchData]);
 
     const editItem = (item) => {
         setCurrentItem(item);
@@ -63,7 +75,7 @@ const FetchAllEmployeeScreen = () => {
         setModalVisible(true);
     };
 
-    const updateItem = async () => {
+    const updateItem = useCallback(async () => {
         try {
             const response = await axios.post('http://attendance.mobitechllp.com/update.php', {
                 Id: currentItem.Id,
@@ -77,11 +89,9 @@ const FetchAllEmployeeScreen = () => {
         } catch (error) {
             Alert.alert('Error', 'Error updating item. Please check network.');
         }
-    };
+    }, [currentItem, name, mobile, password, fetchData]);
 
-    const handleSearch = (text) => {
-        setSearchQuery(text);
-    };
+    const handleSearch = (text) => setSearchQuery(text);
 
     const renderItem = ({ item }) => (
         <TouchableOpacity
@@ -97,16 +107,10 @@ const FetchAllEmployeeScreen = () => {
                     <Text style={styles.name}>{item.Name}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={() => editItem(item)}
-                        style={styles.editButton}
-                    >
+                    <TouchableOpacity onPress={() => editItem(item)} style={styles.editButton}>
                         <Text style={styles.buttonText}>Edit</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => deleteItem(item.Id)}
-                        style={styles.deleteButton}
-                    >
+                    <TouchableOpacity onPress={() => deleteItem(item.Id)} style={styles.deleteButton}>
                         <Text style={styles.buttonText}>Delete</Text>
                     </TouchableOpacity>
                 </View>
@@ -121,7 +125,6 @@ const FetchAllEmployeeScreen = () => {
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
                         <Icon name="chevron-back" size={34} color="white" />
@@ -132,27 +135,22 @@ const FetchAllEmployeeScreen = () => {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-            <View style={{ padding: 20 }}>
+            <View style={styles.content}>
                 <TextInput
                     style={styles.searchBar}
                     placeholder="Search by name"
                     value={searchQuery}
                     onChangeText={handleSearch}
                 />
-
-
                 {loading ? (
                     <Text>Loading...</Text>
                 ) : (
-                    <>
-                        <FlatList
-                            data={filteredData}
-                            keyExtractor={(item) => item.Id.toString()}
-                            renderItem={renderItem}
-                        />
-                    </>
+                    <FlatList
+                        data={filteredData}
+                        keyExtractor={(item) => item.Id.toString()}
+                        renderItem={renderItem}
+                    />
                 )}
-
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -177,19 +175,13 @@ const FetchAllEmployeeScreen = () => {
                             placeholder="Password"
                             value={password}
                             onChangeText={setPassword}
-                            secureTextEntry={false}
+                            secureTextEntry
                         />
                         <View style={styles.modalButtonContainer}>
-                            <TouchableOpacity
-                                onPress={updateItem}
-                                style={styles.modalButton}
-                            >
+                            <TouchableOpacity onPress={updateItem} style={styles.modalButton}>
                                 <Text style={styles.buttonText}>Update</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => setModalVisible(false)}
-                                style={styles.modalButton}
-                            >
+                            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
                                 <Text style={styles.buttonText}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
@@ -206,8 +198,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.background,
     },
     header: {
-        width: width,
-        // height: height * 0.07,
+        width,
         backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -215,10 +206,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 16,
         shadowColor: "#000000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         elevation: 3,
@@ -237,6 +225,9 @@ const styles = StyleSheet.create({
     iconButton: {
         padding: 10,
     },
+    content: {
+        padding: 20,
+    },
     item: {
         padding: 8,
         borderWidth: 1,
@@ -244,10 +235,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 5,
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
     },
@@ -308,10 +296,7 @@ const styles = StyleSheet.create({
         padding: 35,
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,

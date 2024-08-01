@@ -1,171 +1,117 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, TouchableOpacity, Dimensions, Image, Pressable, ToastAndroid } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity, Dimensions, Image, ToastAndroid } from 'react-native';
 import axios from 'axios';
 import StaffDashboard from './StaffDashboard';
 import { theme } from '../theme';
-import Icon from 'react-native-vector-icons/Ionicons'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import Icon from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { version } from '../../package.json';
 
-var { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
+
 const StaffLogin = ({ navigation }) => {
     const [mobile, setMobile] = useState('');
-    const [password, setPassword] = useState('');
     const [employee, setEmployee] = useState(null);
-    const [hidePassword, setHidePassword] = useState(true)
-    const [disableLoginBtn, setDisableLoginBtn] = useState(false)
+    const [disableLoginBtn, setDisableLoginBtn] = useState(false);
 
     const handleLogin = async () => {
+        setDisableLoginBtn(true);
         try {
-            // console.log('Attempting to log in with mobile:', mobile, 'and password:', password);
-            const response = await axios.post('http://attendance.mobitechllp.com/login.php', {
-                mobile
-                // password
-            });
-
-            // console.log('Login response:', response.data);
-
+            const response = await axios.post('http://attendance.mobitechllp.com/login.php', { mobile });
             if (response.data.status === 'success') {
                 setEmployee(response.data.employee);
             } else {
                 Alert.alert('Error', response.data.message);
             }
         } catch (error) {
-            console.error('Error during login:', error);
             Alert.alert('Error', 'Failed to log in. Please try again.');
+        } finally {
+            setDisableLoginBtn(false);
         }
     };
 
-    const appVersion = () => {
+    const showAppVersion = () => {
         ToastAndroid.showWithGravity(
-            version,
+            `Version: ${version}`,
             ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
+            ToastAndroid.CENTER
         );
     };
 
-
     return (
-        < >
-            {
-                employee ? (
-                    <>
-                        <StaffDashboard employee={employee} />
-                    </>
-                ) : (
-                    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <>
+            {employee ? (
+                <StaffDashboard employee={employee} />
+            ) : (
+                <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+                    <SafeAreaView>
+                        <View style={styles.header}>
+                            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.goBack()}>
+                                <Icon name="chevron-back" size={34} color="white" />
+                            </TouchableOpacity>
+                            <Text style={styles.headerText}>Staff Login</Text>
+                            <TouchableOpacity style={styles.iconButton} onPress={showAppVersion}>
+                                <Icon name="information-circle" size={35} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                    </SafeAreaView>
 
-                        <SafeAreaView>
-                            {/* Header */}
-                            <View style={styles.header}>
-                                <TouchableOpacity style={styles.iconBackButton} onPress={() => navigation.goBack()}>
-                                    <Icon name="chevron-back" size={34} color="white" />
-                                </TouchableOpacity>
-                                <Text style={styles.headerText}>Staff Login</Text>
-                                <TouchableOpacity style={styles.iconButton} onPress={() => appVersion()}>
-                                    <Icon name="information-circle" size={35} color="white" />
+                    <View style={styles.loginImage}>
+                        <Image
+                            source={{ uri: 'http://attendance.mobitechllp.com/assets/staff_login.png' }}
+                            style={styles.image}
+                        />
+                    </View>
+
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>Login with mobile number</Text>
+                        <View style={styles.input}>
+                            {/* <Text style={styles.inputTitle}>Mobile</Text> */}
+                            <View style={styles.inputContainer}>
+                                <Icon name='phone-portrait' size={20} color={theme.blackText} />
+                                <TextInput
+                                    keyboardType='number-pad'
+                                    style={styles.textInput}
+                                    placeholderTextColor="#808080"
+                                    placeholder='Mobile'
+                                    value={mobile}
+                                    onChangeText={setMobile}
+                                />
+                            </View>
+                            <TouchableOpacity
+                                style={[styles.loginBtn, { backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor }]}
+                                onPress={handleLogin}
+                                disabled={disableLoginBtn}
+                            >
+                                <Text style={styles.loginBtnText}>Login</Text>
+                            </TouchableOpacity>
+                            <View style={styles.adminContainer}>
+                                <Text style={styles.adminText}>Click here if you are </Text>
+                                <TouchableOpacity onPress={() => navigation.navigate('Admin')} disabled={disableLoginBtn}>
+                                    <Text style={styles.adminLink}>Admin !</Text>
                                 </TouchableOpacity>
                             </View>
-                        </SafeAreaView>
-
-                        <View style={styles.loginImage}>
-                            <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/staff_login.png' }}
-                                style={{
-                                    height: 165,
-                                    width: 280,
-                                    justifyContent: 'center',
-                                    marginTop: 50
-                                }} />
                         </View>
+                    </View>
 
-                        <View style={styles.card}>
-                            <Text style={styles.cardTitle}>Login with mobile number</Text>
-
-                            <View style={styles.input}>
-                                <View>
-                                    <Text style={styles.inputTitle}>Mobile</Text>
-                                    <View style={styles.inputContainer}>
-                                        <Icon name='phone-portrait' padding={8} size={20} color={theme.blackText} />
-                                        <TextInput keyboardType='number-pad'
-                                            style={{
-                                                width: width * 0.65,
-                                                color: theme.blackText,
-                                                textAlign: 'center',
-                                                // backgroundColor: 'red'
-                                            }}
-                                            placeholderTextColor={"#808080"} placeholder='Mobile' value={mobile} onChangeText={setMobile} />
-                                    </View>
-                                </View>
-
-
-                                {/* <View>
-
-                                    <Text style={styles.inputTitle}>Password</Text>
-                                    <View style={styles.inputContainer}>
-                                        <Icon name='lock-closed' padding={8} size={20} color={theme.blackText} />
-                                        <TextInput style={{ width: width * 0.62, color: theme.blackText }} placeholderTextColor={"#808080"} placeholder='Password' secureTextEntry={hidePassword} value={password} onChangeText={setPassword} />
-                                        <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-                                            {
-                                                hidePassword ? <Icon name='eye' padding={8} size={20} color={theme.blackText} />
-                                                    :
-                                                    <Icon name='eye-outline' padding={8} size={20} color={theme.blackText} />}
-                                        </TouchableOpacity>
-                                    </View>
-
-                                </View> */}
-
-                                <TouchableOpacity style={{
-                                    backgroundColor: disableLoginBtn ? '#858585' : theme.themeColor,
-                                    width: 150,
-                                    paddingHorizontal: 22,
-                                    paddingVertical: 12,
-                                    alignSelf: 'center',
-                                    elevation: 3,
-                                    borderRadius: 10
-                                }} onPress={handleLogin} disabled={disableLoginBtn}>
-                                    <Text style={styles.loginBtnText}>Login</Text>
-                                </TouchableOpacity>
-
-                                <View style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    <Text style={{ color: theme.blackText }}>Click here if you are </Text>
-                                    <TouchableOpacity style={{}} onPress={() => navigation.navigate('Admin')} disabled={disableLoginBtn}>
-                                        <Text style={{
-                                            color: theme.themeColor,
-                                            fontWeight: '800',
-                                            fontSize: 16
-                                        }}>
-                                            Admin !
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                    <View style={styles.versionContainer}>
+                        <View style={styles.versionBox}>
+                            <Text style={styles.versionText}>Version: {version}</Text>
                         </View>
-                    </ScrollView>
-
-                )
-            }
-
-
-
-
-
-        </ >
+                    </View>
+                </ScrollView>
+            )}
+        </>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // justifyContent: 'center',
-
         backgroundColor: theme.background
     },
     header: {
-        width: width,
+        width,
         backgroundColor: theme.themeColor,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -173,46 +119,40 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 16,
         shadowColor: "#000000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         elevation: 3,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
     },
-    iconBackButton: {
-        padding: 4,
-        borderRadius: 10,
+    iconButton: {
+        padding: 10,
     },
     headerText: {
         fontSize: 26,
         fontWeight: 'bold',
         color: 'white',
     },
-    iconButton: {
-        padding: 10,
-    },
     loginImage: {
-        width: width,
+        width,
         height: height * 0.25,
-        padding: 50,
         justifyContent: 'center',
         alignItems: 'center'
     },
+    image: {
+        height: 165,
+        width: 280,
+        marginTop: 50
+    },
     card: {
         flex: 1,
-        height: height * 0.67,
+        height: height * 0.62,
         backgroundColor: 'white',
         borderTopRightRadius: 30,
         borderTopLeftRadius: 30,
         shadowColor: "#000000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.18,
         shadowRadius: 4.59,
         elevation: 5,
@@ -225,7 +165,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     input: {
-        // backgroundColor: 'red',
         marginTop: 28,
         padding: 8,
         gap: 30
@@ -234,28 +173,64 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         marginBottom: 4,
         color: theme.blackText,
-
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        // justifyContent: '',
-        // backgroundColor: 'blue',
         gap: 10,
         borderRadius: 10,
         borderWidth: 1.5,
         borderColor: '#5e5e5e'
     },
+    textInput: {
+        width: width * 0.65,
+        color: theme.blackText,
+        textAlign: 'center',
+    },
     loginBtn: {
-
-
+        width: 150,
+        paddingVertical: 12,
+        alignSelf: 'center',
+        borderRadius: 10,
+        marginTop: 30,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 6,
     },
     loginBtnText: {
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
         color: theme.text,
-
+    },
+    adminContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    adminText: {
+        color: theme.blackText
+    },
+    adminLink: {
+        color: theme.themeColor,
+        fontWeight: '800',
+        fontSize: 16
+    },
+    versionContainer: {
+        backgroundColor: 'white',
+        alignItems: 'center',
+        padding: 10
+    },
+    versionBox: {
+        alignSelf: 'center',
+        backgroundColor: '#d6d6d6',
+        padding: 6,
+        borderRadius: 6
+    },
+    versionText: {
+        color: '#828282'
     }
 });
 

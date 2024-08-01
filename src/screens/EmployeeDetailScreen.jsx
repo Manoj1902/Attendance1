@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, StatusBar, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, ToastAndroid } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { theme } from '../theme';
 import axios from 'axios';
@@ -85,7 +85,6 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <StatusBar backgroundColor={theme.background} />
             <SafeAreaView>
                 {/* Header */}
                 <View style={styles.header}>
@@ -101,7 +100,9 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
             {employee.Image ? (
                 <Image source={{ uri: employee.Image }} style={styles.image} />
             ) : (
-                <Text>No Image Available</Text>
+                <Image
+                    source={{ uri: 'http://attendance.mobitechllp.com/assets/user.png' }}
+                />
             )}
             <Text style={styles.nameLabel}>{employee.Name}</Text>
             <View style={styles.employeeDetailsContainer}>
