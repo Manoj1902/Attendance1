@@ -64,7 +64,7 @@ const AdminLoginScreen = ({ navigation }) => {
             </SafeAreaView>
             <View style={styles.loginImage}>
                 <Image
-                    source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }}
+                    source={require('../assets/login.png')}
                     style={styles.loginImageStyle}
                 />
             </View>

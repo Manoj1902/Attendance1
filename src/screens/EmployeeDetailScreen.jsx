@@ -101,7 +101,7 @@ const EmployeeDetailScreen = ({ route, navigation }) => {
                 <Image source={{ uri: employee.Image }} style={styles.image} />
             ) : (
                 <Image
-                    source={{ uri: 'http://attendance.mobitechllp.com/assets/user.png' }}
+                    source={require('../assets/user.png')}
                 />
             )}
             <Text style={styles.nameLabel}>{employee.Name}</Text>

@@ -38,7 +38,7 @@ const AdminDashboard = ({ navigation }) => {
             </View>
 
             <View style={styles.loginImage}>
-                <Image source={{ uri: 'http://attendance.mobitechllp.com/assets/login.png' }} style={styles.image} />
+                <Image source={require('../assets/login.png')} style={styles.image} />
             </View>
 
             <View style={styles.card}>

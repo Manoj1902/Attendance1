@@ -13,13 +13,18 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { theme } from '../theme';
 import { version } from '../../package.json';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
+    const isFocused = useIsFocused();
+
     useEffect(() => {
-        requestLocationPermission();
-    }, []);
+        if (isFocused) {
+            requestLocationPermission();
+        }
+    }, [isFocused]);
 
     const requestLocationPermission = async () => {
         try {
@@ -35,14 +40,18 @@ const HomeScreen = ({ navigation }) => {
             );
 
             if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-                ToastAndroid.showWithGravity(
-                    'Location permission not granted',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.CENTER
-                );
+                if (isFocused) {
+                    ToastAndroid.showWithGravity(
+                        'Location permission not granted',
+                        ToastAndroid.SHORT,
+                        ToastAndroid.CENTER
+                    );
+                }
             }
         } catch (err) {
-            Alert.alert('Error', err.message);
+            if (isFocused) {
+                Alert.alert('Error', err.message);
+            }
         }
     };
 

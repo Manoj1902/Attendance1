@@ -58,7 +58,7 @@ const StaffLogin = ({ navigation }) => {
 
                     <View style={styles.loginImage}>
                         <Image
-                            source={{ uri: 'http://attendance.mobitechllp.com/assets/staff_login.png' }}
+                            source={require('../assets/staff_login.png')}
                             style={styles.image}
                         />
                     </View>

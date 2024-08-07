@@ -39,7 +39,8 @@ const FetchAllEmployeeScreen = () => {
             const response = await axios.get('http://attendance.mobitechllp.com/fetch.php');
             setData(response.data);
         } catch (error) {
-            Alert.alert('Error', error.message);
+            console.error('Network Error:', error);  // Log the error to the console
+            Alert.alert('Error', 'Network error occurred. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }
@@ -100,7 +101,7 @@ const FetchAllEmployeeScreen = () => {
         >
             <View style={styles.itemRow}>
                 <Image
-                    source={{ uri: item.Image || 'http://attendance.mobitechllp.com/assets/user.png' }}
+                    source={item.Image ? { uri: item.Image } : require('../assets/user.png')}
                     style={styles.image}
                 />
                 <View style={styles.itemDetails}>
